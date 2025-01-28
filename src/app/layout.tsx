@@ -2,8 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Sequence Builder',
-  description: 'Build text and pause sequences',
+  title: 'Workout Timer',
+  description: 'Build workout sequences with timers',
 }
 
 export default function RootLayout({

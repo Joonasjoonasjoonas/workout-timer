@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Step {
   id: number;
@@ -17,6 +17,70 @@ export default function Page() {
   const [currentText, setCurrentText] = useState('');
   const [timeValue, setTimeValue] = useState('');
   const [timeUnit, setTimeUnit] = useState<'seconds' | 'minutes' | 'hours'>('seconds');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+
+  const convertToSeconds = (value: number, unit: 'seconds' | 'minutes' | 'hours') => {
+    switch (unit) {
+      case 'hours':
+        return value * 3600;
+      case 'minutes':
+        return value * 60;
+      default:
+        return value;
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs > 0 ? `${hrs}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((time) => {
+          if (time <= 1) {
+            if (currentStepIndex < steps.length - 1) {
+              setCurrentStepIndex(prev => prev + 1);
+              const nextStep = steps[currentStepIndex + 1];
+              return convertToSeconds(nextStep.duration.value, nextStep.duration.unit);
+            } else {
+              setIsActive(false);
+              setIsModalOpen(false);
+              setCurrentStepIndex(0);
+              return 0;
+            }
+          }
+          return time - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft, currentStepIndex, steps]);
+
+  const startWorkout = () => {
+    if (steps.length === 0) return;
+    setCurrentStepIndex(0);
+    const firstStep = steps[0];
+    setTimeLeft(convertToSeconds(firstStep.duration.value, firstStep.duration.unit));
+    setIsModalOpen(true);
+    setIsActive(true);
+  };
+
+  const stopWorkout = () => {
+    setIsActive(false);
+    setIsModalOpen(false);
+    setCurrentStepIndex(0);
+    setTimeLeft(0);
+  };
 
   const addStep = (type: 'text' | 'pause') => {
     const newStep: Step = {
@@ -40,7 +104,7 @@ export default function Page() {
   return (
     <div className="app">
       <div className="container">
-        <h1>Sequence Builder</h1>
+        <h1>Workout Timer</h1>
         
         <div className="input-section">
           <textarea
@@ -79,6 +143,15 @@ export default function Page() {
           </div>
         </div>
 
+        {steps.length > 0 && (
+          <button 
+            onClick={startWorkout}
+            className="start-btn"
+          >
+            Start Workout
+          </button>
+        )}
+
         <div className="steps-list">
           {steps.map((step, index) => (
             <div key={step.id} className={`step-item ${step.type}`}>
@@ -96,6 +169,29 @@ export default function Page() {
             </div>
           ))}
         </div>
+
+        {isModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>{steps[currentStepIndex].text}</h2>
+              <div className="timer">{formatTime(timeLeft)}</div>
+              <div className="progress-bar">
+                <div 
+                  className="progress" 
+                  style={{ 
+                    width: `${(timeLeft / convertToSeconds(
+                      steps[currentStepIndex].duration.value,
+                      steps[currentStepIndex].duration.unit
+                    )) * 100}%` 
+                  }}
+                />
+              </div>
+              <button onClick={stopWorkout} className="stop-btn">
+                Stop
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
