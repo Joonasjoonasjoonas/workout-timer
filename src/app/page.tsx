@@ -93,6 +93,29 @@ export default function Page() {
   const [repeatCount, setRepeatCount] = useState('');
   const [currentRepeat, setCurrentRepeat] = useState(1);
 
+  // Add audio context and single beep function at the top of the component
+  const audioContext = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+
+  const playStartBeep = () => {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 1000; // Gentle pitch
+    gainNode.gain.value = 0.1; // Low volume
+    
+    oscillator.start();
+    
+    // Long gentle beep
+    setTimeout(() => {
+      oscillator.stop();
+    }, 400); // 400ms duration
+  };
+
   // Load steps from localStorage on initial render
   useEffect(() => {
     const savedSteps = localStorage.getItem('exerciseSteps');
@@ -135,6 +158,7 @@ export default function Page() {
       }, 1000);
     } else if (isActive && timeLeft === 0) {
       if (currentStepIndex < steps.length - 1) {
+        playStartBeep(); // Play beep for new step
         setCurrentStepIndex((index) => index + 1);
         setTimeLeft(
           convertToSeconds(
@@ -142,7 +166,8 @@ export default function Page() {
             steps[currentStepIndex + 1].duration.unit
           )
         );
-      } else if (currentRepeat < parseInt(repeatCount)) {
+      } else if (currentRepeat < parseInt(repeatCount || '1')) {
+        playStartBeep(); // Play beep for new repeat
         setCurrentRepeat(prev => prev + 1);
         setCurrentStepIndex(0);
         setTimeLeft(
@@ -209,6 +234,7 @@ export default function Page() {
         steps[0].duration.unit
       )
     );
+    playStartBeep(); // Play beep at start
   };
 
   const stopExercise = () => {
