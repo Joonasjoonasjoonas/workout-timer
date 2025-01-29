@@ -100,6 +100,15 @@ const getAudioContext = () => {
   return audioCtx;
 };
 
+// Add this before the component
+const isValidTimeFormat = (value: string): boolean => {
+  // Allow empty input
+  if (value === '') return true;
+  
+  // Allow single digit or proper MM:SS format
+  return /^\d{0,2}(:\d{0,2})?$/.test(value);
+};
+
 export default function Page() {
   // Remove unused timeUnit state
   const [currentText, setCurrentText] = useState('');
@@ -385,13 +394,13 @@ export default function Page() {
     const totalSeconds = convertTimeToSeconds(timeValue);
     if (totalSeconds <= 0) return;
     
-    const newStep = {
+    const newStep: Step = {
       id: Date.now(),
       type: type,
       text: type === 'text' ? currentText : 'PAUSE',
       duration: {
         value: totalSeconds,
-        unit: 'seconds'
+        unit: 'seconds' as const
       }
     };
     setSteps([...steps, newStep]);
