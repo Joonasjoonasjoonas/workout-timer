@@ -97,8 +97,10 @@ export default function Page() {
     return (minutes * 60) + seconds;
   };
 
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+
   const playStartBeep = () => {
-    if (!audioContext) return;
+    if (!audioContext || !isSoundEnabled) return;
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     oscillator.connect(gainNode);
@@ -298,6 +300,33 @@ export default function Page() {
     }
   };
 
+  // Add wheel handler
+  const handleTimeWheel = (e: React.WheelEvent<HTMLInputElement>) => {
+    e.preventDefault(); // Prevent page scroll
+    
+    if (!timeValue || !timeValue.includes(':')) {
+      setTimeValue('00:00');
+      return;
+    }
+
+    const [minutes, seconds] = timeValue.split(':').map(num => parseInt(num) || 0);
+    let totalSeconds = (minutes * 60) + seconds;
+    
+    // Decrease time on scroll up, increase on scroll down
+    if (e.deltaY < 0) {
+      totalSeconds += 1;
+    } else {
+      totalSeconds = Math.max(0, totalSeconds - 1);
+    }
+
+    const newMinutes = Math.floor(totalSeconds / 60);
+    const newSeconds = totalSeconds % 60;
+    
+    setTimeValue(
+      `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`
+    );
+  };
+
   // Update addStep function
   const addStep = (type: 'text' | 'pause') => {
     if (!timeValue || timeValue === ':') return;
@@ -363,6 +392,7 @@ export default function Page() {
               type="text"
               value={timeValue}
               onChange={handleTimeChange}
+              onWheel={handleTimeWheel}
               placeholder="MM:SS"
               className="number-input"
               pattern="[0-9]{0,2}:[0-9]{0,2}"
@@ -375,6 +405,12 @@ export default function Page() {
               min="1"
               className="number-input"
             />
+            <button
+              onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+              className={`number-input sound-toggle ${!isSoundEnabled ? 'sound-off' : ''}`}
+            >
+              {isSoundEnabled ? 'Sounds On' : 'Sounds Off'} 🔈
+            </button>
           </div>
 
           <div className="button-group">
@@ -397,7 +433,7 @@ export default function Page() {
               className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
               disabled={steps.length === 0}
             >
-              Start Exercise
+              Start Workout
             </button>
           </div>
          

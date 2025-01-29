@@ -429,3 +429,7 @@ body {
   background-color: #4CAF5050;
 }
 
+.sound-toggle.sound-off {
+  opacity: 0.5;
+}
+
