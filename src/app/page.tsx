@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -96,7 +96,7 @@ export default function Page() {
   // Add audio context and single beep function at the top of the component
   const audioContext = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
-  const playStartBeep = () => {
+  const playStartBeep = useCallback(() => {
     if (!audioContext) return;
     
     const oscillator = audioContext.createOscillator();
@@ -105,7 +105,7 @@ export default function Page() {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
-    oscillator.frequency.value = 1000; // Gentle pitch
+    oscillator.frequency.value = 800; // Gentle pitch
     gainNode.gain.value = 0.1; // Low volume
     
     oscillator.start();
@@ -114,7 +114,7 @@ export default function Page() {
     setTimeout(() => {
       oscillator.stop();
     }, 400); // 400ms duration
-  };
+  });
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -201,7 +201,7 @@ export default function Page() {
         clearInterval(interval);
       }
     };
-  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount]);
+  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount, playStartBeep]);
 
   const startExercise = () => {
     if (steps.length === 0) return;
@@ -326,7 +326,7 @@ export default function Page() {
               type="number"
               value={repeatCount}
               onChange={(e) => setRepeatCount(e.target.value)}
-              placeholder="Complete Rounds"
+              placeholder="Total Rounds"
               min="1"
               className="number-input"
             />
