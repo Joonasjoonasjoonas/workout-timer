@@ -35,6 +35,13 @@ interface SortableStepItemProps {
   removeStep: (id: number) => void;
 }
 
+// Move utility functions outside the component
+const formatTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
 function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   const {
     attributes,
@@ -50,7 +57,7 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   };
 
   const handleRemoveClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent drag event from firing
+    e.stopPropagation();
     removeStep(step.id);
   };
 
@@ -63,9 +70,7 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
       <div {...attributes} {...listeners} className="step-content">
         <span className="step-number">{index + 1}</span>
         <p className="step-text">{step.text}</p>
-        <p className="step-duration">
-          {step.duration.value} {step.duration.unit}
-        </p>
+        <p className="step-duration">{formatTime(step.duration.value)}</p>
       </div>
       <button
         onClick={handleRemoveClick}
@@ -78,6 +83,34 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
 }
 
 export default function Page() {
+  // Move all utility functions to the top
+  const audioContext = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+
+  const isValidTimeFormat = (value: string): boolean => {
+    if (value === '') return true;
+    return /^\d{0,2}(:\d{0,2})?$/.test(value);
+  };
+
+  const convertTimeToSeconds = (timeString: string): number => {
+    if (!timeString.includes(':')) return 0;
+    const [minutes, seconds] = timeString.split(':').map(num => parseInt(num) || 0);
+    return (minutes * 60) + seconds;
+  };
+
+  const playStartBeep = () => {
+    if (!audioContext) return;
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.frequency.value = 1000;
+    gainNode.gain.value = 0.1;
+    oscillator.start();
+    setTimeout(() => {
+      oscillator.stop();
+    }, 400);
+  };
+
   const [steps, setSteps] = useState<Step[]>([]);
   const [currentText, setCurrentText] = useState('');
   const [timeValue, setTimeValue] = useState('');
@@ -92,29 +125,6 @@ export default function Page() {
   const [finishCountdown, setFinishCountdown] = useState(3);
   const [repeatCount, setRepeatCount] = useState('');
   const [currentRepeat, setCurrentRepeat] = useState(1);
-
-  // Add audio context and single beep function at the top of the component
-  const audioContext = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
-
-  const playStartBeep = useCallback(() => {
-    if (!audioContext) return;
-    
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 800; // Gentle pitch
-    gainNode.gain.value = 0.1; // Low volume
-    
-    oscillator.start();
-    
-    // Long gentle beep
-    setTimeout(() => {
-      oscillator.stop();
-    }, 400); // 400ms duration
-  });
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -140,13 +150,6 @@ export default function Page() {
       default:
         return value;
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hrs > 0 ? `${hrs}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   useEffect(() => {
@@ -247,25 +250,41 @@ export default function Page() {
     setCurrentRepeat(1);
   };
 
+  // Update time input handler
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    if (isValidTimeFormat(value)) {
+      // If user types a number and there's no colon yet
+      if (value.length === 2 && !value.includes(':')) {
+        setTimeValue(value + ':');
+      } else {
+        setTimeValue(value);
+      }
+    }
+  };
+
+  // Update addStep function
   const addStep = (type: 'text' | 'pause') => {
-    if (!timeValue || parseInt(timeValue) <= 0) return;
+    if (!timeValue || timeValue === ':') return;
+    
+    const seconds = convertTimeToSeconds(timeValue);
+    if (seconds <= 0) return;
     
     const newStep = {
       id: Date.now(),
       type: type,
       text: type === 'text' ? currentText : 'PAUSE',
       duration: {
-        value: parseInt(timeValue),
-        unit: timeUnit
+        value: seconds,
+        unit: 'seconds'
       }
     };
     setSteps([...steps, newStep]);
     
-    // Only clear text if it's a pause step
     if (type === 'pause') {
       setCurrentText('');
     }
-    // Keep timeValue and timeUnit as they are
   };
 
   const removeStep = (id: number) => {
@@ -307,26 +326,18 @@ export default function Page() {
           
           <div className="time-input">
             <input
-              type="number"
+              type="text"
               value={timeValue}
-              onChange={(e) => setTimeValue(e.target.value)}
-              placeholder="Duration of Exercise"
+              onChange={handleTimeChange}
+              placeholder="MM:SS"
               className="number-input"
-              min="1"
+              pattern="[0-9]{0,2}:[0-9]{0,2}"
             />
-            <select 
-              value={timeUnit}
-              onChange={(e) => setTimeUnit(e.target.value as 'seconds' | 'minutes')}
-              className="select-input"
-            >
-              <option value="seconds">Seconds</option>
-              <option value="minutes">Minutes</option>
-            </select>
             <input
               type="number"
               value={repeatCount}
               onChange={(e) => setRepeatCount(e.target.value)}
-              placeholder="Total Rounds"
+              placeholder="Repeat amount"
               min="1"
               className="number-input"
             />
