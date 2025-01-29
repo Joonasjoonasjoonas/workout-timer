@@ -117,8 +117,12 @@ export default function Page() {
       }
     };
     setSteps([...steps, newStep]);
-    setCurrentText('');
-    setTimeValue('');
+    
+    // Only clear text if it's a pause step
+    if (type === 'pause') {
+      setCurrentText('');
+    }
+    // Keep timeValue and timeUnit as they are
   };
 
   const removeStep = (id: number) => {
