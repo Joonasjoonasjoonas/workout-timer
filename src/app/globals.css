@@ -106,7 +106,6 @@ h1 {
 .time-input {
   display: flex;
   gap: 1rem;
-  margin: 0;
 }
 
 .btn,
@@ -116,7 +115,7 @@ h1 {
   padding: 1rem;
   border: none;
   border-radius: 5px;
-  width: calc((100% - 2rem) / 3); /* Width for 3 equal elements with 2 equal gaps */
+  width: calc((100% - 2rem) / 3); /* Three equal elements with two gaps */
   font-size: 1rem;
   font-weight: 500;
   flex: none;

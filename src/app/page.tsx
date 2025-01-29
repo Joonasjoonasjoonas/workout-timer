@@ -90,6 +90,8 @@ export default function Page() {
   const [countdownTime, setCountdownTime] = useState(3);
   const [isFinished, setIsFinished] = useState(false);
   const [finishCountdown, setFinishCountdown] = useState(3);
+  const [repeatCount, setRepeatCount] = useState('1');
+  const [currentRepeat, setCurrentRepeat] = useState(1);
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -142,6 +144,15 @@ export default function Page() {
             steps[currentStepIndex + 1].duration.unit
           )
         );
+      } else if (currentRepeat < parseInt(repeatCount)) {
+        setCurrentRepeat(prev => prev + 1);
+        setCurrentStepIndex(0);
+        setTimeLeft(
+          convertToSeconds(
+            steps[0].duration.value,
+            steps[0].duration.unit
+          )
+        );
       } else {
         // Workout is complete
         setIsActive(false);
@@ -167,7 +178,7 @@ export default function Page() {
         clearInterval(interval);
       }
     };
-  }, [isActive, timeLeft, currentStepIndex, steps]);
+  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount]);
 
   const startWorkout = () => {
     if (steps.length === 0) return;
@@ -175,6 +186,7 @@ export default function Page() {
     setIsModalOpen(true);
     setIsCountingDown(true);
     setCountdownTime(3);
+    setCurrentRepeat(1);
 
     // Start the 3-second countdown
     const countdownInterval = setInterval(() => {
@@ -182,7 +194,7 @@ export default function Page() {
         if (prev <= 1) {
           clearInterval(countdownInterval);
           setIsCountingDown(false);
-          startExerciseTimer(); // Start the actual workout after countdown
+          startExerciseTimer();
           return 0;
         }
         return prev - 1;
@@ -208,6 +220,7 @@ export default function Page() {
     setTimeLeft(0);
     setIsFinished(false);
     setFinishCountdown(3);
+    setCurrentRepeat(1);
   };
 
   const addStep = (type: 'text' | 'pause') => {
@@ -285,6 +298,14 @@ export default function Page() {
               <option value="minutes">Minutes</option>
               <option value="hours">Hours</option>
             </select>
+            <input
+              type="number"
+              value={repeatCount}
+              onChange={(e) => setRepeatCount(e.target.value)}
+              placeholder="Repeats"
+              min="1"
+              className="number-input"
+            />
           </div>
 
           <div className="button-group">
@@ -366,7 +387,10 @@ export default function Page() {
                 </>
               ) : currentStepIndex < steps.length && (
                 <>
-                  <h2>{steps[currentStepIndex].text}</h2>
+                  <h2>
+                    {steps[currentStepIndex].text}
+                    {parseInt(repeatCount) > 1 && ` (${currentRepeat}/${repeatCount})`}
+                  </h2>
                   <div className="timer">{formatTime(timeLeft)}</div>
                   <div className="progress-bar">
                     <div 
