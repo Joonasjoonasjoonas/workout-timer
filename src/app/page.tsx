@@ -1,6 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Step {
   id: number;
@@ -10,6 +27,49 @@ interface Step {
     value: number;
     unit: 'seconds' | 'minutes' | 'hours';
   };
+}
+
+interface SortableStepItemProps {
+  step: Step;
+  index: number;
+  removeStep: (id: number) => void;
+}
+
+function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: step.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`step-item ${step.type === 'pause' ? 'pause' : ''}`}
+    >
+      <span className="step-number">{index + 1}</span>
+      <p className="step-text">{step.text}</p>
+      <p className="step-duration">
+        {step.duration.value} {step.duration.unit}
+      </p>
+      <button
+        onClick={() => removeStep(step.id)}
+        className="remove-btn"
+      >
+        ×
+      </button>
+    </div>
+  );
 }
 
 export default function Page() {
@@ -129,6 +189,26 @@ export default function Page() {
     setSteps(steps.filter(step => step.id !== id));
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      setSteps((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+        
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   return (
     <div className="app">
       <div className="container">
@@ -187,23 +267,27 @@ export default function Page() {
          
         </div>
 
-        <div className="steps-list">
-          {steps.map((step, index) => (
-            <div key={step.id} className={`step-item ${step.type}`}>
-              <span className="step-number">{index + 1}</span>
-              <p className="step-text">{step.text}</p>
-              <p className="step-duration">
-                {step.duration.value} {step.duration.unit}
-              </p>
-              <button 
-                onClick={() => removeStep(step.id)}
-                className="remove-btn"
-              >
-                ×
-              </button>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={steps.map(step => step.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="steps-list">
+              {steps.map((step, index) => (
+                <SortableStepItem
+                  key={step.id}
+                  step={step}
+                  index={index}
+                  removeStep={removeStep}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
 
         {isModalOpen && currentStepIndex < steps.length && (
           <div className="modal-overlay">

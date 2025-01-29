@@ -204,6 +204,20 @@ h1 {
   align-items: center;
   gap: 1rem;
   position: relative;
+  user-select: none;
+  touch-action: none;
+}
+
+.step-item:active {
+  background-color: #3d3d3d;
+  cursor: grabbing;
+}
+
+/* Add grab cursor for desktop */
+@media (hover: hover) {
+  .step-item {
+    cursor: grab;
+  }
 }
 
 .step-item.pause {
