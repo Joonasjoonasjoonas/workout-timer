@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
 
 interface Step {
   id: number;
@@ -486,7 +487,11 @@ export default function Page() {
               onClick={() => setIsSoundEnabled(!isSoundEnabled)}
               className={`number-input sound-toggle ${!isSoundEnabled ? 'sound-off' : ''}`}
             >
-              {isSoundEnabled ? 'Sounds On' : 'Sounds Off'} 🔈
+              {isSoundEnabled ? 'Sounds On ' : 'Sounds Off '}
+              {isSoundEnabled ? 
+                <SpeakerWaveIcon className="w-5 h-5 inline" /> : 
+                <SpeakerXMarkIcon className="w-5 h-5 inline" />
+              }
             </button>
           </div>
 
