@@ -25,7 +25,7 @@ interface Step {
   text: string;
   duration: {
     value: number;
-    unit: 'seconds' | 'minutes' | 'hours';
+    unit: 'seconds' | 'minutes' ;
   };
 }
 
@@ -81,7 +81,7 @@ export default function Page() {
   const [steps, setSteps] = useState<Step[]>([]);
   const [currentText, setCurrentText] = useState('');
   const [timeValue, setTimeValue] = useState('');
-  const [timeUnit, setTimeUnit] = useState<'seconds' | 'minutes' | 'hours'>('seconds');
+  const [timeUnit, setTimeUnit] = useState<'seconds' | 'minutes' >('seconds');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -90,7 +90,7 @@ export default function Page() {
   const [countdownTime, setCountdownTime] = useState(3);
   const [isFinished, setIsFinished] = useState(false);
   const [finishCountdown, setFinishCountdown] = useState(3);
-  const [repeatCount, setRepeatCount] = useState('1');
+  const [repeatCount, setRepeatCount] = useState('');
   const [currentRepeat, setCurrentRepeat] = useState(1);
 
   // Load steps from localStorage on initial render
@@ -110,10 +110,8 @@ export default function Page() {
     localStorage.setItem('workoutSteps', JSON.stringify(steps));
   }, [steps]);
 
-  const convertToSeconds = (value: number, unit: 'seconds' | 'minutes' | 'hours') => {
+  const convertToSeconds = (value: number, unit: 'seconds' | 'minutes') => {
     switch (unit) {
-      case 'hours':
-        return value * 3600;
       case 'minutes':
         return value * 60;
       default:
@@ -286,23 +284,23 @@ export default function Page() {
               type="number"
               value={timeValue}
               onChange={(e) => setTimeValue(e.target.value)}
-              placeholder="Time"
+              placeholder="Duration of Exercise"
               className="number-input"
+              min="1"
             />
             <select 
               value={timeUnit}
-              onChange={(e) => setTimeUnit(e.target.value as 'seconds' | 'minutes' | 'hours')}
+              onChange={(e) => setTimeUnit(e.target.value as 'seconds' | 'minutes')}
               className="select-input"
             >
               <option value="seconds">Seconds</option>
               <option value="minutes">Minutes</option>
-              <option value="hours">Hours</option>
             </select>
             <input
               type="number"
               value={repeatCount}
               onChange={(e) => setRepeatCount(e.target.value)}
-              placeholder="Repeats"
+              placeholder="Amount of Rounds"
               min="1"
               className="number-input"
             />
