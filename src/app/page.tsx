@@ -49,21 +49,26 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
     transition,
   };
 
+  const handleRemoveClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent drag event from firing
+    removeStep(step.id);
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       className={`step-item ${step.type === 'pause' ? 'pause' : ''}`}
     >
-      <span className="step-number">{index + 1}</span>
-      <p className="step-text">{step.text}</p>
-      <p className="step-duration">
-        {step.duration.value} {step.duration.unit}
-      </p>
+      <div {...attributes} {...listeners} className="step-content">
+        <span className="step-number">{index + 1}</span>
+        <p className="step-text">{step.text}</p>
+        <p className="step-duration">
+          {step.duration.value} {step.duration.unit}
+        </p>
+      </div>
       <button
-        onClick={() => removeStep(step.id)}
+        onClick={handleRemoveClick}
         className="remove-btn"
       >
         ×
