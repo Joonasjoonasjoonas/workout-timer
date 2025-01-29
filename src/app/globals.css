@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
   background-color: #1a1a1a;
   color: #ffffff;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .container {
@@ -33,16 +33,24 @@ body {
 }
 
 h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
   text-align: center;
-  color: #fff;
-  margin: 0;
+  margin: 2rem 0;
+  background: linear-gradient(45deg, #4CAF50, #81C784);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .input-section {
   background-color: #2d2d2d;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 10px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .text-input {
@@ -68,7 +76,7 @@ h1 {
   background-color: #3d3d3d;
   border: none;
   border-radius: 5px;
-  padding: 0.5rem;
+  padding: 1rem;
   color: #fff;
 }
 
@@ -86,7 +94,7 @@ h1 {
 }
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -192,7 +200,7 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   transition: all 0.2s;
 }
 
@@ -221,7 +229,7 @@ body {
 
 .modal {
   background-color: #2d2d2d;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 10px;
   width: 90%;
   max-width: 500px;
@@ -252,7 +260,7 @@ body {
 .progress {
   height: 100%;
   background-color: #4CAF50;
-  transition: width 1s linear;
+  transition: none;
 }
 
 .stop-btn {

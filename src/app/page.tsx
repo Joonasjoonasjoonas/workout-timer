@@ -142,7 +142,7 @@ export default function Page() {
 
           <div className="button-group">
             <button onClick={() => addStep('text')} className="btn">
-              Add Text
+              Add Exercise
             </button>
             <button onClick={() => addStep('pause')} className="btn pause-btn">
               Add Pause
