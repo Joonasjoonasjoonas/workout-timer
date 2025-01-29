@@ -88,6 +88,8 @@ export default function Page() {
   const [isActive, setIsActive] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdownTime, setCountdownTime] = useState(3);
+  const [isFinished, setIsFinished] = useState(false);
+  const [finishCountdown, setFinishCountdown] = useState(3);
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -127,30 +129,45 @@ export default function Page() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isActive && steps.length > 0 && currentStepIndex < steps.length) {
+    if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime === 0) {
-            if (currentStepIndex < steps.length - 1) {
-              const nextIndex = currentStepIndex + 1;
-              const nextStep = steps[nextIndex];
-              setCurrentStepIndex(nextIndex);
-              return convertToSeconds(nextStep.duration.value, nextStep.duration.unit);
-            } else {
-              // Workout complete
-              setIsActive(false);
-              setIsModalOpen(false);
-              setCurrentStepIndex(0);
+        setTimeLeft((time) => time - 1);
+      }, 1000);
+    } else if (isActive && timeLeft === 0) {
+      if (currentStepIndex < steps.length - 1) {
+        setCurrentStepIndex((index) => index + 1);
+        setTimeLeft(
+          convertToSeconds(
+            steps[currentStepIndex + 1].duration.value,
+            steps[currentStepIndex + 1].duration.unit
+          )
+        );
+      } else {
+        // Workout is complete
+        setIsActive(false);
+        setIsFinished(true);
+        setFinishCountdown(3);
+        
+        // Start the finish countdown
+        const finishInterval = setInterval(() => {
+          setFinishCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(finishInterval);
+              stopWorkout();
               return 0;
             }
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
+            return prev - 1;
+          });
+        }, 1000);
+      }
     }
 
-    return () => clearInterval(interval);
-  }, [isActive, currentStepIndex, steps]);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isActive, timeLeft, currentStepIndex, steps]);
 
   const startWorkout = () => {
     if (steps.length === 0) return;
@@ -189,6 +206,8 @@ export default function Page() {
     setIsModalOpen(false);
     setCurrentStepIndex(0);
     setTimeLeft(0);
+    setIsFinished(false);
+    setFinishCountdown(3);
   };
 
   const addStep = (type: 'text' | 'pause') => {
@@ -328,6 +347,19 @@ export default function Page() {
                       className="progress counting" 
                       style={{ 
                         width: `${(countdownTime / 3) * 100}%`
+                      }}
+                    />
+                  </div>
+                </>
+              ) : isFinished ? (
+                <>
+                  <h2>Done!</h2>
+                  <div className="timer">{finishCountdown}</div>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress counting" 
+                      style={{ 
+                        width: `${(finishCountdown / 3) * 100}%`
                       }}
                     />
                   </div>
