@@ -82,10 +82,20 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   );
 }
 
-export default function Page() {
-  // Move all utility functions to the top
-  const audioContext = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+// Create a single AudioContext instance outside the component
+let audioCtx: AudioContext | null = null;
 
+// Helper to get or create AudioContext
+const getAudioContext = () => {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  return audioCtx;
+};
+
+export default function Page() {
+  // Remove the audioContext declaration from component
+  
   const isValidTimeFormat = (value: string): boolean => {
     if (value === '') return true;
     return /^\d{0,2}(:\d{0,2})?$/.test(value);
@@ -100,18 +110,62 @@ export default function Page() {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   const playStartBeep = () => {
-    if (!audioContext || !isSoundEnabled) return;
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    oscillator.frequency.value = 1000;
-    gainNode.gain.value = 0.1;
-    oscillator.start();
-    setTimeout(() => {
-      oscillator.stop();
-    }, 400);
+    if (!isSoundEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      oscillator.frequency.value = 1000;
+      gainNode.gain.value = 0.1;
+      
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        oscillator.disconnect();
+        gainNode.disconnect();
+      }, 400);
+    } catch (error) {
+      console.error('Audio error:', error);
+    }
   };
+
+  const playCountdownBeep = () => {
+    if (!isSoundEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      oscillator.frequency.value = 800;
+      gainNode.gain.value = 0.1;
+      
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        oscillator.disconnect();
+        gainNode.disconnect();
+      }, 100);
+    } catch (error) {
+      console.error('Audio error:', error);
+    }
+  };
+
+  // Clean up AudioContext when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
+      }
+    };
+  }, []);
 
   const [steps, setSteps] = useState<Step[]>([]);
   const [currentText, setCurrentText] = useState('');
@@ -159,6 +213,10 @@ export default function Page() {
 
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
+        // Play countdown beep in last 3 seconds
+        if (timeLeft <= 4) {
+          playCountdownBeep();
+        }
         setTimeLeft((time) => time - 1);
       }, 1000);
     } else if (isActive && timeLeft === 0) {
