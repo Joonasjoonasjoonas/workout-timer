@@ -121,14 +121,24 @@ export default function Page() {
       gainNode.connect(ctx.destination);
       
       oscillator.frequency.value = 1000;
-      gainNode.gain.value = 0.1;
       
-      oscillator.start();
+      // Start with zero gain
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      // Ramp up
+      gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.01);
+      // Sustain
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.39);
+      // Ramp down
+      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
+      
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.4);
+      
+      // Cleanup after the sound is done
       setTimeout(() => {
-        oscillator.stop();
         oscillator.disconnect();
         gainNode.disconnect();
-      }, 400);
+      }, 500);
     } catch (error) {
       console.error('Audio error:', error);
     }
@@ -145,14 +155,24 @@ export default function Page() {
       gainNode.connect(ctx.destination);
       
       oscillator.frequency.value = 800;
-      gainNode.gain.value = 0.1;
       
-      oscillator.start();
+      // Start with zero gain
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      // Ramp up
+      gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.005);
+      // Sustain
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.095);
+      // Ramp down
+      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+      
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.1);
+      
+      // Cleanup after the sound is done
       setTimeout(() => {
-        oscillator.stop();
         oscillator.disconnect();
         gainNode.disconnect();
-      }, 100);
+      }, 200);
     } catch (error) {
       console.error('Audio error:', error);
     }
