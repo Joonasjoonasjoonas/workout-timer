@@ -173,31 +173,27 @@ h1 {
   padding-right: 2.5rem;
 }
 
-/* Responsive styles for mobile */
+/* Update responsive styles */
 @media (max-width: 768px) {
   .time-input {
+    flex-direction: column;
+    gap: 1rem;
     width: 100%;
-    flex-direction: row;
   }
 
-  .number-input {
-    width: calc(50% - 0.5rem);
-    flex: none;
-  }
-
+  .number-input,
   .select-input {
-    width: calc(50% - 0.5rem);
-    flex: none;
+    width: 100%;
   }
 
-  /* Keep button-group styles intact */
   .button-group {
     display: flex;
     gap: 1rem;
   }
 
-  .btn {
-    flex: 1;
+  .btn,
+  .start-btn {
+    width: calc((100% - 2rem) / 3);
   }
 }
 
