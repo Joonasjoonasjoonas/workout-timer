@@ -150,14 +150,13 @@ export default function Page() {
           </div>
         </div>
 
-        {steps.length > 0 && (
-          <button 
-            onClick={startWorkout}
-            className="start-btn"
-          >
-            Start Workout
-          </button>
-        )}
+        <button 
+          onClick={startWorkout}
+          className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
+          disabled={steps.length === 0}
+        >
+          Start Workout
+        </button>
 
         <div className="steps-list">
           {steps.map((step, index) => (
