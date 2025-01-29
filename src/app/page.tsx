@@ -22,6 +22,23 @@ export default function Page() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
+  // Load steps from localStorage on initial render
+  useEffect(() => {
+    const savedSteps = localStorage.getItem('workoutSteps');
+    if (savedSteps) {
+      try {
+        setSteps(JSON.parse(savedSteps));
+      } catch (error) {
+        console.error('Error loading steps from localStorage:', error);
+      }
+    }
+  }, []);
+
+  // Save steps to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('workoutSteps', JSON.stringify(steps));
+  }, [steps]);
+
   const convertToSeconds = (value: number, unit: 'seconds' | 'minutes' | 'hours') => {
     switch (unit) {
       case 'hours':
@@ -147,16 +164,16 @@ export default function Page() {
             <button onClick={() => addStep('pause')} className="btn pause-btn">
               Add Pause
             </button>
+             <button 
+              onClick={startWorkout}
+              className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
+              disabled={steps.length === 0}
+            >
+              Start Workout
+             </button>
           </div>
+         
         </div>
-
-        <button 
-          onClick={startWorkout}
-          className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
-          disabled={steps.length === 0}
-        >
-          Start Workout
-        </button>
 
         <div className="steps-list">
           {steps.map((step, index) => (
