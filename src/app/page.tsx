@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -83,33 +83,43 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   );
 }
 
-// Create a single AudioContext instance outside the component
+// Define WebKit audio context type properly
+interface WebKitWindow extends Window {
+  webkitAudioContext: typeof AudioContext;
+}
+
+// Create single AudioContext instance
 let audioCtx: AudioContext | null = null;
 
-// Helper to get or create AudioContext
 const getAudioContext = () => {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioContextClass = window.AudioContext || 
+      (window as unknown as WebKitWindow).webkitAudioContext;
+    audioCtx = new AudioContextClass();
   }
   return audioCtx;
 };
 
 export default function Page() {
-  // Remove the audioContext declaration from component
-  
-  const isValidTimeFormat = (value: string): boolean => {
-    if (value === '') return true;
-    return /^\d{0,2}(:\d{0,2})?$/.test(value);
-  };
-
-  const convertTimeToSeconds = (timeString: string): number => {
-    if (!timeString.includes(':')) return 0;
-    const [minutes, seconds] = timeString.split(':').map(num => parseInt(num) || 0);
-    return (minutes * 60) + seconds;
-  };
-
+  // Remove unused timeUnit state
+  const [currentText, setCurrentText] = useState('');
+  const [timeValue, setTimeValue] = useState('');
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [countdownTime, setCountdownTime] = useState(3);
+  const [isFinished, setIsFinished] = useState(false);
+  const [finishCountdown, setFinishCountdown] = useState(3);
+  const [currentRepeat, setCurrentRepeat] = useState(1);
+  const [repeatCount, setRepeatCount] = useState('');
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  // Define sound functions inside component to use in dependencies
   const playStartBeep = () => {
     if (!isSoundEnabled) return;
     try {
@@ -122,19 +132,14 @@ export default function Page() {
       
       oscillator.frequency.value = 1000;
       
-      // Start with zero gain
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      // Ramp up
       gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.01);
-      // Sustain
       gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.39);
-      // Ramp down
       gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
       
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.4);
       
-      // Cleanup after the sound is done
       setTimeout(() => {
         oscillator.disconnect();
         gainNode.disconnect();
@@ -156,19 +161,14 @@ export default function Page() {
       
       oscillator.frequency.value = 800;
       
-      // Start with zero gain
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      // Ramp up
       gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.005);
-      // Sustain
       gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.095);
-      // Ramp down
       gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
       
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.1);
       
-      // Cleanup after the sound is done
       setTimeout(() => {
         oscillator.disconnect();
         gainNode.disconnect();
@@ -177,31 +177,6 @@ export default function Page() {
       console.error('Audio error:', error);
     }
   };
-
-  // Clean up AudioContext when component unmounts
-  useEffect(() => {
-    return () => {
-      if (audioCtx) {
-        audioCtx.close();
-        audioCtx = null;
-      }
-    };
-  }, []);
-
-  const [steps, setSteps] = useState<Step[]>([]);
-  const [currentText, setCurrentText] = useState('');
-  const [timeValue, setTimeValue] = useState('');
-  const [timeUnit, setTimeUnit] = useState<'seconds' | 'minutes' >('seconds');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [isCountingDown, setIsCountingDown] = useState(false);
-  const [countdownTime, setCountdownTime] = useState(3);
-  const [isFinished, setIsFinished] = useState(false);
-  const [finishCountdown, setFinishCountdown] = useState(3);
-  const [repeatCount, setRepeatCount] = useState('');
-  const [currentRepeat, setCurrentRepeat] = useState(1);
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -220,13 +195,10 @@ export default function Page() {
     localStorage.setItem('exerciseSteps', JSON.stringify(steps));
   }, [steps]);
 
-  const convertToSeconds = (value: number, unit: 'seconds' | 'minutes') => {
-    switch (unit) {
-      case 'minutes':
-        return value * 60;
-      default:
-        return value;
-    }
+  const convertTimeToSeconds = (timeString: string): number => {
+    if (!timeString.includes(':')) return 0;
+    const [minutes, seconds] = timeString.split(':').map(num => parseInt(num) || 0);
+    return (minutes * 60) + seconds;
   };
 
   useEffect(() => {
@@ -244,22 +216,12 @@ export default function Page() {
       if (currentStepIndex < steps.length - 1) {
         playStartBeep(); // Play beep for new step
         setCurrentStepIndex((index) => index + 1);
-        setTimeLeft(
-          convertToSeconds(
-            steps[currentStepIndex + 1].duration.value,
-            steps[currentStepIndex + 1].duration.unit
-          )
-        );
+        setTimeLeft(steps[currentStepIndex + 1].duration.value);
       } else if (currentRepeat < parseInt(repeatCount || '1')) {
         playStartBeep(); // Play beep for new repeat
         setCurrentRepeat(prev => prev + 1);
         setCurrentStepIndex(0);
-        setTimeLeft(
-          convertToSeconds(
-            steps[0].duration.value,
-            steps[0].duration.unit
-          )
-        );
+        setTimeLeft(steps[0].duration.value);
       } else {
         // Workout is complete
         setIsActive(false);
@@ -312,13 +274,8 @@ export default function Page() {
   const startExerciseTimer = () => {
     setCurrentStepIndex(0);
     setIsActive(true);
-    setTimeLeft(
-      convertToSeconds(
-        steps[0].duration.value,
-        steps[0].duration.unit
-      )
-    );
-    playStartBeep(); // Play beep at start
+    setTimeLeft(steps[0].duration.value);
+    playStartBeep();
   };
 
   const stopExercise = () => {
@@ -397,9 +354,6 @@ export default function Page() {
     };
   }, []);
 
-  // Update the time input to use a ref
-  const timeInputRef = useRef<HTMLInputElement>(null);
-
   // Update handleTimeWheel to not call preventDefault
   const handleTimeWheel = (e: React.WheelEvent<HTMLInputElement>) => {
     if (!timeValue || !timeValue.includes(':')) {
@@ -428,15 +382,15 @@ export default function Page() {
   const addStep = (type: 'text' | 'pause') => {
     if (!timeValue || timeValue === ':') return;
     
-    const seconds = convertTimeToSeconds(timeValue);
-    if (seconds <= 0) return;
+    const totalSeconds = convertTimeToSeconds(timeValue);
+    if (totalSeconds <= 0) return;
     
     const newStep = {
       id: Date.now(),
       type: type,
       text: type === 'text' ? currentText : 'PAUSE',
       duration: {
-        value: seconds,
+        value: totalSeconds,
         unit: 'seconds'
       }
     };
@@ -603,10 +557,7 @@ export default function Page() {
                     <div 
                       className="progress counting"
                       style={{ 
-                        width: `${(timeLeft / convertToSeconds(
-                          steps[currentStepIndex].duration.value,
-                          steps[currentStepIndex].duration.unit
-                        )) * 100}%`
+                        width: `${(timeLeft / steps[currentStepIndex].duration.value) * 100}%`
                       }}
                     />
                   </div>
