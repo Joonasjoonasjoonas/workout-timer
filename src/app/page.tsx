@@ -158,19 +158,27 @@ export default function Page() {
           </div>
 
           <div className="button-group">
-            <button onClick={() => addStep('text')} className="btn">
+            <button 
+              onClick={() => addStep('text')} 
+              className={`btn ${(!currentText || !timeValue) ? 'disabled' : ''}`}
+              disabled={!currentText || !timeValue}
+            >
               Add Exercise
             </button>
-            <button onClick={() => addStep('pause')} className="btn pause-btn">
+            <button 
+              onClick={() => addStep('pause')} 
+              className={`btn pause-btn ${!timeValue ? 'disabled' : ''}`}
+              disabled={!timeValue}
+            >
               Add Pause
             </button>
-             <button 
+            <button 
               onClick={startWorkout}
               className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
               disabled={steps.length === 0}
             >
               Start Workout
-             </button>
+            </button>
           </div>
          
         </div>
