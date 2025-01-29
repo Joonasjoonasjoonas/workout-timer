@@ -92,6 +92,33 @@ h1 {
   scrollbar-color: #4CAF50 #2d2d2d;
 }
 
+/* Button styles */
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s;
+  flex: 1;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.pause-btn {
+  background-color: #ff9800;
+}
+
+/* Time input styles for desktop */
 .time-input {
   display: flex;
   gap: 1rem;
@@ -131,29 +158,32 @@ h1 {
   flex: none;
 }
 
-.button-group {
-  display: flex;
-  gap: 1rem;
-}
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .time-input {
+    width: 100%;
+    flex-direction: row;
+  }
 
-.btn {
-  padding: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: opacity 0.2s;
-  flex: 1;
-  background-color: #4CAF50;
-  color: white;
-}
+  .number-input {
+    width: calc(50% - 0.5rem);
+    flex: none;
+  }
 
-.btn:hover {
-  opacity: 0.9;
-}
+  .select-input {
+    width: calc(50% - 0.5rem);
+    flex: none;
+  }
 
-.pause-btn {
-  background-color: #ff9800;
+  /* Keep button-group styles intact */
+  .button-group {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn {
+    flex: 1;
+  }
 }
 
 .steps-list {
