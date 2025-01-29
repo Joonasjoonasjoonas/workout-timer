@@ -122,28 +122,41 @@ h1 {
   flex: none;
 }
 
-.btn,
-.start-btn {
-  cursor: pointer;
-  font-weight: bold;
-  transition: opacity 0.2s;
-  background-color: #4CAF50;
+.btn {
+  background-color: #2196F3; /* Blue for Add Exercise */
   color: white;
 }
 
-.btn.disabled,
+.btn:hover:not(.disabled) {
+  background-color: #1976D2; /* Darker blue on hover */
+}
+
+.btn.disabled {
+  background-color: #2196F350; /* Semi-transparent blue */
+}
+
+.start-btn {
+  background-color: #4CAF50; /* Keep green for Start Workout */
+}
+
+.start-btn:hover:not(.disabled) {
+  background-color: #388E3C; /* Darker green on hover */
+}
+
 .start-btn.disabled {
-  background-color: #4CAF5050;
-  cursor: not-allowed;
-  opacity: 0.7;
+  background-color: #4CAF5050; /* Semi-transparent green */
 }
 
 .pause-btn {
-  background-color: #ff9800;
+  background-color: #FF9800; /* Orange for Add Pause */
+}
+
+.pause-btn:hover:not(.disabled) {
+  background-color: #F57C00; /* Darker orange on hover */
 }
 
 .pause-btn.disabled {
-  background-color: #ff980050;
+  background-color: #FF980050; /* Semi-transparent orange */
 }
 
 .number-input,
@@ -387,3 +400,26 @@ body {
   box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8); /* Light green with 80% opacity */
   border-color: #81C784; /* Light green */
 }
+
+/* Update disabled button styles */
+.btn.disabled,
+.pause-btn.disabled,
+.start-btn.disabled {
+  background-color: #4CAF5050;
+  cursor: not-allowed;
+  opacity: 0.7;
+  color: rgba(255, 255, 255, 0.5); /* Darker text for disabled state */
+}
+
+.btn.disabled {
+  background-color: #2196F350;
+}
+
+.pause-btn.disabled {
+  background-color: #FF980050;
+}
+
+.start-btn.disabled {
+  background-color: #4CAF5050;
+}
+
