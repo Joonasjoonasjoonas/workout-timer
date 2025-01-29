@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Step {
   id: number;
@@ -21,30 +21,6 @@ export default function Page() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-
-  // Initialize speech synthesis
-  useEffect(() => {
-    const loadVoices = () => {
-      const availableVoices = window.speechSynthesis.getVoices();
-      setVoices(availableVoices);
-      console.log('Voices loaded:', availableVoices);
-    };
-
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices(); // Initial load
-
-    // Test speech
-    const testSpeech = async () => {
-      await speak('Timer ready');
-    };
-    setTimeout(testSpeech, 1000);
-
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
 
   const convertToSeconds = (value: number, unit: 'seconds' | 'minutes' | 'hours') => {
     switch (unit) {
@@ -64,149 +40,44 @@ export default function Page() {
     return `${hrs > 0 ? `${hrs}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const beep = useCallback(() => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.value = 800;
-    gainNode.gain.value = 0.5;
-
-    oscillator.start();
-    setTimeout(() => {
-      oscillator.stop();
-      audioContext.close();
-    }, 200);
-  }, []);
-
-  const speak = async (text: string): Promise<void> => {
-    console.log('Attempting to speak:', text);
-    
-    return new Promise((resolve) => {
-      if ('speechSynthesis' in window) {
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Try to find an English voice
-        const englishVoice = voices.find(voice => 
-          voice.lang.startsWith('en-')
-        );
-
-        if (englishVoice) {
-          console.log('Using voice:', englishVoice.name);
-          utterance.voice = englishVoice;
-        } else {
-          console.log('No English voice found, using default');
-        }
-
-        utterance.onstart = () => {
-          console.log('Speech started:', text);
-          setIsSpeaking(true);
-        };
-
-        utterance.onend = () => {
-          console.log('Speech ended:', text);
-          setIsSpeaking(false);
-          resolve();
-        };
-
-        utterance.onerror = (event) => {
-          console.error('Speech error:', event);
-          setIsSpeaking(false);
-          resolve();
-        };
-
-        // Ensure we're not speaking before starting new speech
-        if (window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
-        }
-
-        // Small delay before speaking
-        setTimeout(() => {
-          window.speechSynthesis.speak(utterance);
-        }, 100);
-      } else {
-        console.log('Speech synthesis not supported');
-        resolve();
-      }
-    });
-  };
-
-  const startTimer = useCallback(async (step: Step) => {
-    console.log('Starting timer for step:', step);
-    setIsActive(false); // Pause timer while speaking
-
-    try {
-      // Announce the step
-      if (step.type === 'text') {
-        await speak(step.text);
-      } else {
-        await speak('Rest period');
-      }
-
-      // Start the countdown
-      setIsActive(true);
-    } catch (error) {
-      console.error('Error in startTimer:', error);
-      setIsActive(true); // Ensure timer starts even if speech fails
-    }
-  }, []);
-
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isActive && timeLeft > 0 && !isSpeaking) {
+    if (isActive && steps.length > 0 && currentStepIndex < steps.length) {
       interval = setInterval(() => {
-        setTimeLeft((time) => {
-          if (time <= 3 && time > 0) {
-            beep();
-            speak(time.toString());
-          }
-
-          if (time <= 1) {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
             if (currentStepIndex < steps.length - 1) {
-              const nextStep = steps[currentStepIndex + 1];
-              setCurrentStepIndex(prev => prev + 1);
-              const nextDuration = convertToSeconds(nextStep.duration.value, nextStep.duration.unit);
-              startTimer(nextStep);
-              return nextDuration;
+              const nextIndex = currentStepIndex + 1;
+              const nextStep = steps[nextIndex];
+              setCurrentStepIndex(nextIndex);
+              return convertToSeconds(nextStep.duration.value, nextStep.duration.unit);
             } else {
-              speak("Workout complete! Great job!");
+              // Workout complete
               setIsActive(false);
               setIsModalOpen(false);
               setCurrentStepIndex(0);
               return 0;
             }
           }
-          return time - 1;
+          return prevTime - 1;
         });
       }, 1000);
     }
 
-    return () => {
-      clearInterval(interval);
-      window.speechSynthesis?.cancel();
-    };
-  }, [isActive, timeLeft, currentStepIndex, steps, isSpeaking, beep, startTimer]);
+    return () => clearInterval(interval);
+  }, [isActive, currentStepIndex, steps]);
 
-  const startWorkout = async () => {
+  const startWorkout = () => {
     if (steps.length === 0) return;
-    
-    const firstStep = steps[0];
-    if (!firstStep) return;
     
     setCurrentStepIndex(0);
     setIsModalOpen(true);
-    const initialDuration = convertToSeconds(firstStep.duration.value, firstStep.duration.unit);
-    setTimeLeft(initialDuration);
+    setIsActive(true);
     
-    console.log('Starting workout with step:', firstStep);
-    await startTimer(firstStep);
+    // Set initial time from first step
+    const firstStep = steps[0];
+    setTimeLeft(convertToSeconds(firstStep.duration.value, firstStep.duration.unit));
   };
 
   const stopWorkout = () => {
@@ -214,19 +85,17 @@ export default function Page() {
     setIsModalOpen(false);
     setCurrentStepIndex(0);
     setTimeLeft(0);
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setTimeout(() => speak("Workout stopped"), 100);
-    }
   };
 
   const addStep = (type: 'text' | 'pause') => {
-    const newStep: Step = {
+    if (!timeValue || parseInt(timeValue) <= 0) return;
+    
+    const newStep = {
       id: Date.now(),
       type: type,
       text: type === 'text' ? currentText : 'PAUSE',
       duration: {
-        value: parseInt(timeValue) || 0,
+        value: parseInt(timeValue),
         unit: timeUnit
       }
     };
@@ -308,7 +177,7 @@ export default function Page() {
           ))}
         </div>
 
-        {isModalOpen && steps[currentStepIndex] && (
+        {isModalOpen && currentStepIndex < steps.length && (
           <div className="modal-overlay">
             <div className="modal">
               <h2>{steps[currentStepIndex].text}</h2>
@@ -320,7 +189,11 @@ export default function Page() {
                     width: `${(timeLeft / convertToSeconds(
                       steps[currentStepIndex].duration.value,
                       steps[currentStepIndex].duration.unit
-                    )) * 100}%` 
+                    )) * 100}%`,
+                    transition: timeLeft === convertToSeconds(
+                      steps[currentStepIndex].duration.value,
+                      steps[currentStepIndex].duration.unit
+                    ) ? 'none' : 'width 1s linear'
                   }}
                 />
               </div>

@@ -35,7 +35,7 @@ body {
 h1 {
   text-align: center;
   color: #fff;
-  margin-bottom: 2rem;
+  margin: 0;
 }
 
 .input-section {
@@ -263,4 +263,36 @@ body {
 
 .stop-btn:hover {
   opacity: 0.9;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.speaker-btn {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.speaker-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.speaker-btn svg {
+  width: 24px;
+  height: 24px;
 }
