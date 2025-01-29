@@ -383,3 +383,13 @@ body {
   width: 24px;
   height: 24px;
 }
+
+/* Focus styles for all inputs */
+.btn:focus,
+.text-input:focus,
+.number-input:focus,
+.select-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8); /* Light green with 80% opacity */
+  border-color: #81C784; /* Light green */
+}
