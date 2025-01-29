@@ -86,6 +86,8 @@ export default function Page() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [countdownTime, setCountdownTime] = useState(3);
 
   // Load steps from localStorage on initial render
   useEffect(() => {
@@ -153,13 +155,33 @@ export default function Page() {
   const startWorkout = () => {
     if (steps.length === 0) return;
     
-    setCurrentStepIndex(0);
     setIsModalOpen(true);
+    setIsCountingDown(true);
+    setCountdownTime(3);
+
+    // Start the 3-second countdown
+    const countdownInterval = setInterval(() => {
+      setCountdownTime((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          setIsCountingDown(false);
+          startExerciseTimer(); // Start the actual workout after countdown
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const startExerciseTimer = () => {
+    setCurrentStepIndex(0);
     setIsActive(true);
-    
-    // Set initial time from first step
-    const firstStep = steps[0];
-    setTimeLeft(convertToSeconds(firstStep.duration.value, firstStep.duration.unit));
+    setTimeLeft(
+      convertToSeconds(
+        steps[0].duration.value,
+        steps[0].duration.unit
+      )
+    );
   };
 
   const stopWorkout = () => {
@@ -294,22 +316,39 @@ export default function Page() {
           </SortableContext>
         </DndContext>
 
-        {isModalOpen && currentStepIndex < steps.length && (
+        {isModalOpen && (
           <div className="modal-overlay">
             <div className="modal">
-              <h2>{steps[currentStepIndex].text}</h2>
-              <div className="timer">{formatTime(timeLeft)}</div>
-              <div className="progress-bar">
-                <div 
-                  className="progress" 
-                  style={{ 
-                    width: `${(timeLeft / convertToSeconds(
-                      steps[currentStepIndex].duration.value,
-                      steps[currentStepIndex].duration.unit
-                    )) * 100}%`
-                  }}
-                />
-              </div>
+              {isCountingDown ? (
+                <>
+                  <h2>Get Ready!</h2>
+                  <div className="timer">{countdownTime}</div>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress counting" 
+                      style={{ 
+                        width: `${(countdownTime / 3) * 100}%`
+                      }}
+                    />
+                  </div>
+                </>
+              ) : currentStepIndex < steps.length && (
+                <>
+                  <h2>{steps[currentStepIndex].text}</h2>
+                  <div className="timer">{formatTime(timeLeft)}</div>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress counting"
+                      style={{ 
+                        width: `${(timeLeft / convertToSeconds(
+                          steps[currentStepIndex].duration.value,
+                          steps[currentStepIndex].duration.unit
+                        )) * 100}%`
+                      }}
+                    />
+                  </div>
+                </>
+              )}
               <button onClick={stopWorkout} className="stop-btn">
                 Stop
               </button>
