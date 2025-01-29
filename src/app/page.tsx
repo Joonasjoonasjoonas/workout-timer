@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -358,10 +358,29 @@ export default function Page() {
     }
   };
 
-  // Add wheel handler
+  // Add useEffect to handle wheel event
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.matches('input[type="text"]')) {
+        e.preventDefault();
+      }
+    };
+
+    // Add event listener with passive: false
+    document.addEventListener('wheel', handleWheel, { passive: false });
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
+  // Update the time input to use a ref
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  // Update handleTimeWheel to not call preventDefault
   const handleTimeWheel = (e: React.WheelEvent<HTMLInputElement>) => {
-    e.preventDefault(); // Prevent page scroll
-    
     if (!timeValue || !timeValue.includes(':')) {
       setTimeValue('00:00');
       return;
@@ -370,7 +389,6 @@ export default function Page() {
     const [minutes, seconds] = timeValue.split(':').map(num => parseInt(num) || 0);
     let totalSeconds = (minutes * 60) + seconds;
     
-    // Decrease time on scroll up, increase on scroll down
     if (e.deltaY < 0) {
       totalSeconds += 1;
     } else {
@@ -447,6 +465,7 @@ export default function Page() {
           
           <div className="time-input">
             <input
+              ref={timeInputRef}
               type="text"
               value={timeValue}
               onChange={handleTimeChange}
