@@ -95,7 +95,7 @@ export default function Page() {
 
   // Load steps from localStorage on initial render
   useEffect(() => {
-    const savedSteps = localStorage.getItem('workoutSteps');
+    const savedSteps = localStorage.getItem('exerciseSteps');
     if (savedSteps) {
       try {
         setSteps(JSON.parse(savedSteps));
@@ -107,7 +107,7 @@ export default function Page() {
 
   // Save steps to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('workoutSteps', JSON.stringify(steps));
+    localStorage.setItem('exerciseSteps', JSON.stringify(steps));
   }, [steps]);
 
   const convertToSeconds = (value: number, unit: 'seconds' | 'minutes') => {
@@ -162,7 +162,7 @@ export default function Page() {
           setFinishCountdown((prev) => {
             if (prev <= 1) {
               clearInterval(finishInterval);
-              stopWorkout();
+              stopExercise();
               return 0;
             }
             return prev - 1;
@@ -178,7 +178,7 @@ export default function Page() {
     };
   }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount]);
 
-  const startWorkout = () => {
+  const startExercise = () => {
     if (steps.length === 0) return;
     
     setIsModalOpen(true);
@@ -211,7 +211,7 @@ export default function Page() {
     );
   };
 
-  const stopWorkout = () => {
+  const stopExercise = () => {
     setIsActive(false);
     setIsModalOpen(false);
     setCurrentStepIndex(0);
@@ -275,7 +275,7 @@ export default function Page() {
           <textarea
             value={currentText}
             onChange={(e) => setCurrentText(e.target.value)}
-            placeholder="Workout Name or Description (for example: 'Legs', 'Pushups', etc)"
+            placeholder="Exercise Name or Description (for example: 'Legs', 'Pushups', etc)"
             className="text-input"
           />
           
@@ -300,7 +300,7 @@ export default function Page() {
               type="number"
               value={repeatCount}
               onChange={(e) => setRepeatCount(e.target.value)}
-              placeholder="Amount of Rounds"
+              placeholder="Complete Rounds"
               min="1"
               className="number-input"
             />
@@ -322,18 +322,18 @@ export default function Page() {
               Add Pause
             </button>
             <button 
-              onClick={startWorkout}
+              onClick={startExercise}
               className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
               disabled={steps.length === 0}
             >
-              Start Workout
+              Start Exercise
             </button>
           </div>
          
         </div>
 
         <DndContext
-          sensors={sensors}
+         sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
@@ -403,7 +403,7 @@ export default function Page() {
                   </div>
                 </>
               )}
-              <button onClick={stopWorkout} className="stop-btn">
+              <button onClick={stopExercise} className="stop-btn">
                 Stop
               </button>
             </div>

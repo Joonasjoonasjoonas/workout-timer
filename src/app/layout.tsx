@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Workout Timer',
-  description: 'Build workout sequences with timers',
+  description: 'Build exercise sequences with timers',
 }
 
 export default function RootLayout({

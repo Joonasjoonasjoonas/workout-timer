@@ -135,7 +135,7 @@ h1 {
 }
 
 .start-btn {
-  background-color: #4CAF50; /* Keep green for Start Workout */
+  background-color: #4CAF50; /* Keep green for Start Exercise */
 }
 
 .start-btn:hover:not(.disabled) {
