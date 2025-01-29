@@ -253,11 +253,45 @@ export default function Page() {
   // Update time input handler
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    const prevValue = timeValue;
     
+    // Handle backspace
+    if (value.length < prevValue.length) {
+      // If we're deleting the colon, keep the minutes
+      if (prevValue.includes(':') && !value.includes(':')) {
+        setTimeValue(prevValue.split(':')[0]);
+        return;
+      }
+      // Allow normal deletion
+      setTimeValue(value);
+      return;
+    }
+
     if (isValidTimeFormat(value)) {
-      // If user types a number and there's no colon yet
       if (value.length === 2 && !value.includes(':')) {
+        // Add colon after 2 digits for minutes
         setTimeValue(value + ':');
+      } else if (value.includes(':')) {
+        const [minutes, seconds] = value.split(':');
+        
+        // If minutes are entered and seconds are empty or just completed
+        if (minutes && (!seconds || seconds.length === 2)) {
+          if (!seconds) {
+            // Auto-add '00' for seconds
+            setTimeValue(`${minutes}:00`);
+            return;
+          }
+          
+          // Handle seconds > 59
+          const mins = parseInt(minutes);
+          const secs = parseInt(seconds);
+          if (secs > 59) {
+            setTimeValue(`${(mins + 1).toString().padStart(2, '0')}:00`);
+            return;
+          }
+        }
+        
+        setTimeValue(value);
       } else {
         setTimeValue(value);
       }
