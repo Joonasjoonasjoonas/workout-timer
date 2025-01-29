@@ -134,7 +134,7 @@ export default function Page() {
           <textarea
             value={currentText}
             onChange={(e) => setCurrentText(e.target.value)}
-            placeholder="Enter your text..."
+            placeholder="Workout Name or Description (for example: 'Legs', 'Pushups', etc)"
             className="text-input"
           />
           
