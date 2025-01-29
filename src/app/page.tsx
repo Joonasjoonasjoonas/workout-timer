@@ -46,7 +46,7 @@ export default function Page() {
     if (isActive && steps.length > 0 && currentStepIndex < steps.length) {
       interval = setInterval(() => {
         setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
+          if (prevTime === 0) {
             if (currentStepIndex < steps.length - 1) {
               const nextIndex = currentStepIndex + 1;
               const nextStep = steps[nextIndex];
@@ -188,11 +188,7 @@ export default function Page() {
                     width: `${(timeLeft / convertToSeconds(
                       steps[currentStepIndex].duration.value,
                       steps[currentStepIndex].duration.unit
-                    )) * 100}%`,
-                    transition: timeLeft === convertToSeconds(
-                      steps[currentStepIndex].duration.value,
-                      steps[currentStepIndex].duration.unit
-                    ) ? 'none' : 'width 1s linear'
+                    )) * 100}%`
                   }}
                 />
               </div>
