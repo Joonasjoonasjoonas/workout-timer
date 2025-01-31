@@ -124,10 +124,9 @@ h1 {
   flex: none;
 }
 
-.btn,
-.start-btn,
-.pause-btn,
-.sound-toggle {
+.btn {
+  background-color: #2196F3; /* Bright blue for enabled Add Exercise */
+  color: white;
   flex: 1;
   min-width: 0; /* Prevents buttons from overflowing */
   padding: 0.75rem 0.5rem;
@@ -142,12 +141,91 @@ h1 {
   gap: 0.5rem;
 }
 
+.btn:hover:not(.disabled) {
+  background-color: #1976D2;
+}
+
+.btn.disabled {
+  background-color: #2196F350;
+  cursor: not-allowed;
+}
+
+.start-btn {
+  background-color: #4CAF50; /* Bright green for enabled Start Workout */
+  color: white;
+  flex: 1;
+  min-width: 0; /* Prevents buttons from overflowing */
+  padding: 0.75rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.start-btn:hover:not(.disabled) {
+  background-color: #388E3C;
+}
+
+.start-btn.disabled {
+  background-color: #4CAF5050;
+  cursor: not-allowed;
+}
+
+.pause-btn {
+  background-color: #FF9800; /* Bright orange for enabled Add Pause */
+  color: white;
+  flex: 1;
+  min-width: 0; /* Prevents buttons from overflowing */
+  padding: 0.75rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pause-btn:hover:not(.disabled) {
+  background-color: #F57C00;
+}
+
+.pause-btn.disabled {
+  background-color: #FF980050;
+  cursor: not-allowed;
+}
+
 .sound-toggle {
-  background-color: #4a4a4a;  /* Grey color for sound toggle */
+  background-color: #4a4a4a;
+  color: white;
+  flex: 1;
+  min-width: 0; /* Prevents buttons from overflowing */
+  padding: 0.75rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .sound-toggle:hover:not(.disabled) {
   background-color: #5a5a5a;
+}
+
+.sound-toggle.disabled {
+  background-color: #4a4a4a50;
+  cursor: not-allowed;
 }
 
 /* Mobile styles */
