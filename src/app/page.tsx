@@ -438,8 +438,11 @@ export default function Page() {
     <div className="app">
       <div className="container">
         <h1>Workout Timer</h1>
+           
         
         <div className="input-section">
+          Description 
+       
           <textarea
             value={currentText}
             onChange={(e) => setCurrentText(e.target.value)}
@@ -448,6 +451,7 @@ export default function Page() {
           />
           
           <div className="time-input">
+            Single exercise or pause duration 
             <input
               ref={timeInputRef}
               type="text"
@@ -458,24 +462,8 @@ export default function Page() {
               className="number-input"
               pattern="[0-9]{0,2}:[0-9]{0,2}"
             />
-            <input
-              type="number"
-              value={repeatCount}
-              onChange={(e) => setRepeatCount(e.target.value)}
-              placeholder="Repeat amount"
-              min="1"
-              className="number-input"
-            />
-            <button
-              onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-              className={`number-input sound-toggle ${!isSoundEnabled ? 'sound-off' : ''}`}
-            >
-              {isSoundEnabled ? 'Sounds On ' : 'Sounds Off '}
-              {isSoundEnabled ? 
-                <SpeakerWaveIcon className="w-5 h-5 inline" /> : 
-                <SpeakerXMarkIcon className="w-5 h-5 inline" />
-              }
-            </button>
+          
+           
           </div>
 
           <div className="button-group">
@@ -493,6 +481,16 @@ export default function Page() {
             >
               Add Pause
             </button>
+             <button
+              onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+              className={`btn sound-toggle ${!isSoundEnabled ? 'sound-off' : ''}`}
+            >
+              {isSoundEnabled ? 'Sounds On ' : 'Sounds Off '}
+              {isSoundEnabled ? 
+                <SpeakerWaveIcon className="w-5 h-5 inline" /> : 
+                <SpeakerXMarkIcon className="w-5 h-5 inline" />
+              }
+            </button>
             <button 
               onClick={startExercise}
               className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
@@ -500,6 +498,7 @@ export default function Page() {
             >
               Start Workout
             </button>
+            
           </div>
          
         </div>
