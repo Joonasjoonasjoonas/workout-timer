@@ -279,7 +279,7 @@ h1 {
 
   .btn,
   .start-btn {
-    width: calc((100% - 2rem) / 3);
+    width: 100%
   }
 }
 
