@@ -51,14 +51,69 @@ export default function Page() {
   // Load steps from localStorage on initial render
   useEffect(() => {
     const savedSteps = localStorage.getItem('exerciseSteps');
-    if (savedSteps) {
+    if (savedSteps && savedSteps !== '[]') {
       try {
         setSteps(JSON.parse(savedSteps));
       } catch (error) {
         console.error('Error loading steps from localStorage:', error);
       }
+    } else {
+      // Create example workout if no saved steps exist
+      const exampleWorkout: Step[] = [
+        {
+          id: 1,
+          type: 'exercise',
+          text: 'Squats',
+          duration: { value: 40, unit: 'seconds' }
+        },
+        {
+          id: 2,
+          type: 'pause',
+          text: 'PAUSE',
+          duration: { value: 20, unit: 'seconds' }
+        },
+        {
+          id: 3,
+          type: 'exercise',
+          text: 'Burpees',
+          duration: { value: 40, unit: 'seconds' }
+        },
+        {
+          id: 4,
+          type: 'pause',
+          text: 'PAUSE',
+          duration: { value: 20, unit: 'seconds' }
+        },
+        {
+          id: 5,
+          type: 'exercise',
+          text: 'Lunges',
+          duration: { value: 40, unit: 'seconds' }
+        },
+        {
+          id: 6,
+          type: 'pause',
+          text: 'PAUSE',
+          duration: { value: 20, unit: 'seconds' }
+        },
+        {
+          id: 7,
+          type: 'exercise',
+          text: 'Pushups',
+          duration: { value: 40, unit: 'seconds' }
+        },
+        {
+          id: 8,
+          type: 'pause',
+          text: 'PAUSE',
+          duration: { value: 60, unit: 'seconds' }
+        }
+      ];
+      
+      setSteps(exampleWorkout);
+      localStorage.setItem('exerciseSteps', JSON.stringify(exampleWorkout));
     }
-  }, []);
+  }, []); // Run only on initial mount
 
   // Save steps to localStorage whenever they change
   useEffect(() => {
