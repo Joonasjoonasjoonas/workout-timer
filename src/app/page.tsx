@@ -24,6 +24,7 @@ import { formatTime, isValidTimeFormat } from '@/utils/utils';
 import { useAudio } from '@/hooks/useAudio';
 import SortableStepItem from '@/components/SortableStepItem';
 import { TotalRounds } from '@/components/TotalRounds';
+import { SaveWorkoutModal } from '@/components/SaveWorkoutModal';
 
 export default function Page() {
   // Remove unused timeUnit state
@@ -46,6 +47,7 @@ export default function Page() {
     type: null
   });
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
@@ -370,6 +372,12 @@ export default function Page() {
       });
     }
   };
+  const handleSaveWorkout = (name: string) => {
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts') || '{}');
+    savedWorkouts[name] = steps;
+    localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
+    setIsSaveModalOpen(false);
+  };
 
   return (
     <div className="app">
@@ -380,7 +388,9 @@ export default function Page() {
           <div className="input-section-top">
             <span>Description</span>
             <div className="input-section-top-buttons">
-              <button><FolderPlusIcon className="w-4 h-4" /></button>
+              <button onClick={() => setIsSaveModalOpen(true)}>
+                <FolderPlusIcon className="w-4 h-4" />
+              </button>
               <button><FolderOpenIcon className="w-4 h-4" /></button>
             </div>
           </div>
@@ -528,6 +538,11 @@ export default function Page() {
           </div>
         )}
       </div>
+      <SaveWorkoutModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSave={handleSaveWorkout}
+      />
     </div>
   );
 } 
