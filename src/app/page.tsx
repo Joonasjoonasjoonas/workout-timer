@@ -19,29 +19,16 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
+import { Step } from '@/types/StepItem';
+import { formatTime } from '@/utils/utils';
 
-interface Step {
-  id: number;
-  type: 'text' | 'pause';
-  text: string;
-  duration: {
-    value: number;
-    unit: 'seconds' | 'minutes' ;
-  };
-}
+
 
 interface SortableStepItemProps {
   step: Step;
   index: number;
   removeStep: (id: number) => void;
 }
-
-// Move utility functions outside the component
-const formatTime = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-};
 
 function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   const {
