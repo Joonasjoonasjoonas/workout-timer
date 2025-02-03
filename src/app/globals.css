@@ -484,38 +484,41 @@ body {
   height: 24px;
 }
 
-/* Focus styles for all inputs */
+/* Focus styles for buttons */
 .btn:focus,
+.start-btn:focus,
+.pause-btn:focus,
+.sound-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
+  border-radius: 5px;
+}
+
+/* Focus styles for edit and remove buttons */
+.edit-btn:focus,
+.remove-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
+  border-radius: 5px;
+}
+
+/* Focus styles for inputs */
 .text-input:focus,
 .number-input:focus,
 .select-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8); /* Light green with 80% opacity */
-  border-color: #81C784; /* Light green */
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
+  border-radius: 5px;
 }
 
-/* Update disabled button styles */
-.btn.disabled,
-.pause-btn.disabled,
-.start-btn.disabled {
-  background-color: #4CAF5050;
-  cursor: not-allowed;
-  opacity: 0.7;
-  color: rgba(255, 255, 255, 0.5); /* Darker text for disabled state */
+/* Ensure focus is visible even when using mouse */
+:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8) !important;
 }
 
-.btn.disabled {
-  background-color: #2196F350;
-}
-
-.pause-btn.disabled {
-  background-color: #FF980050;
-}
-
-.start-btn.disabled {
-  background-color: #4CAF5050;
-}
-
-.sound-toggle.sound-off {
-  opacity: 0.5;
+/* Remove default focus styles for mouse users but keep them for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }
