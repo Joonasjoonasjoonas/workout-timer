@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Step } from '@/types/StepItem';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 interface LoadWorkoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLoad: (steps: Step[]) => void;
+  workouts: Record<string, Step[]>;
+  setWorkouts: (workouts: Record<string, Step[]>) => void;
 }
 
 const exampleWorkout: Step[] = [
@@ -58,15 +61,17 @@ const exampleWorkout: Step[] = [
   }
 ];
 
-export function LoadWorkoutModal({ isOpen, onClose, onLoad }: LoadWorkoutModalProps) {
+export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkouts }: LoadWorkoutModalProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
-  const [workouts, setWorkouts] = useState<Record<string, Step[]>>(() => {
-    if (typeof window !== 'undefined') {
-      const savedWorkouts = localStorage.getItem('savedWorkouts');
-      return savedWorkouts ? JSON.parse(savedWorkouts) : {};
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+
+  // Reset selection when modal opens
+  useEffect(() => {
+    if (isOpen) {
+        setSelectedWorkout(null);
+        setIsDeleteMode(false);
     }
-    return {};
-  });
+  }, [isOpen]);
 
   const handleLoad = () => {
     if (selectedWorkout === 'example') {
@@ -78,48 +83,97 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad }: LoadWorkoutModalPr
     }
   };
 
+  const handleDelete = () => {
+    if (selectedWorkout && selectedWorkout !== 'example') {
+      const updatedWorkouts = { ...workouts };
+      delete updatedWorkouts[selectedWorkout];
+      setWorkouts(updatedWorkouts);
+      localStorage.setItem('savedWorkouts', JSON.stringify(updatedWorkouts));
+      setSelectedWorkout(null);
+      setIsDeleteMode(false);
+    }
+  };
+
+  const handleDeleteClick = (name: string) => {
+    setSelectedWorkout(name);
+    setIsDeleteMode(true);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Load workout program</h2>
-        <div className="workout-list">
-          <button
-            className={`workout-btn ${selectedWorkout === 'example' ? 'selected' : ''}`}
-            onClick={() => setSelectedWorkout('example')}
-          >
-            Example Program
-          </button>
-          {Object.keys(workouts).map((name) => (
-            <button
-              key={name}
-              className={`workout-btn ${selectedWorkout === name ? 'selected' : ''}`}
-              onClick={() => setSelectedWorkout(name)}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-        <div className="button-group" style={{ marginTop: '1rem' }}>
-          <button 
-            onClick={onClose}
-            className="btn"
-            style={{ backgroundColor: '#ff5252' }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleLoad}
-            className={`btn ${!selectedWorkout ? 'disabled' : ''}`}
-            disabled={!selectedWorkout}
-            style={{ 
-              backgroundColor: selectedWorkout ? '#4CAF50' : '#2d4c2f'
-            }}
-          >
-            Load
-          </button>
-        </div>
+        {!isDeleteMode ? (
+          <>
+            <h2>Load workout program</h2>
+            <div className="workout-list">
+              <button
+                className={`workout-btn ${selectedWorkout === 'example' ? 'selected' : ''}`}
+                onClick={() => setSelectedWorkout('example')}
+              >
+                Example Program
+              </button>
+              {Object.keys(workouts).map((name) => (
+                <div key={name} className="workout-item">
+                  <button
+                    className={`workout-btn ${selectedWorkout === name ? 'selected' : ''}`}
+                    onClick={() => setSelectedWorkout(name)}
+                  >
+                    {name}
+                    <button
+                    onClick={() => handleDeleteClick(name)}
+                    className="delete-btn"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                  </button>
+                  
+                </div>
+              ))}
+            </div>
+            <div className="button-group" style={{ marginTop: '1rem' }}>
+              <button 
+                onClick={onClose}
+                className="btn"
+                style={{ backgroundColor: '#ff5252' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLoad}
+                className={`btn ${!selectedWorkout ? 'disabled' : ''}`}
+                disabled={!selectedWorkout}
+                style={{ 
+                  backgroundColor: selectedWorkout ? '#4CAF50' : '#2d4c2f'
+                }}
+              >
+                Load
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2>Remove workout program?</h2>
+            <p className="delete-message">Are you sure you want to remove "{selectedWorkout}"?</p>
+            <div className="button-group" style={{ marginTop: '1rem' }}>
+              <button 
+                onClick={() => setIsDeleteMode(false)}
+                className="btn"
+                style={{ backgroundColor: '#ff5252' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="btn"
+                style={{ backgroundColor: '#4CAF50' }}
+              >
+                Remove
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

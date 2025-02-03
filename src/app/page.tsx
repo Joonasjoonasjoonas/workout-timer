@@ -50,6 +50,13 @@ export default function Page() {
   });
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [savedWorkouts, setSavedWorkouts] = useState<Record<string, Step[]>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('savedWorkouts');
+      return saved ? JSON.parse(saved) : {};
+    }
+    return {};
+  });
 
   const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
@@ -375,11 +382,12 @@ export default function Page() {
     }
   };
   const handleSaveWorkout = (workoutName: string) => {
-    const savedWorkouts = localStorage.getItem('savedWorkouts');
-    const workouts = savedWorkouts ? JSON.parse(savedWorkouts) : {};
-    
-    workouts[workoutName] = steps;
-    localStorage.setItem('savedWorkouts', JSON.stringify(workouts));
+    const updatedWorkouts = {
+      ...savedWorkouts,
+      [workoutName]: steps
+    };
+    setSavedWorkouts(updatedWorkouts);
+    localStorage.setItem('savedWorkouts', JSON.stringify(updatedWorkouts));
     setIsSaveModalOpen(false);
   };
 
@@ -555,10 +563,12 @@ export default function Page() {
         onSave={handleSaveWorkout}
       />
       <LoadWorkoutModal
-  isOpen={isLoadModalOpen}
-  onClose={() => setIsLoadModalOpen(false)}
-  onLoad={handleLoadWorkout}
-/>
+        isOpen={isLoadModalOpen}
+        onClose={() => setIsLoadModalOpen(false)}
+        onLoad={handleLoadWorkout}
+        workouts={savedWorkouts}
+        setWorkouts={setSavedWorkouts}
+      />
     </div>
   );
 } 

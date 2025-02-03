@@ -621,6 +621,9 @@ body {
 }
 
 .workout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 1rem;
   background-color: #3d3d3d;
   border: none;
@@ -637,4 +640,37 @@ body {
 
 .workout-btn.selected {
   background-color: #2196F3;
+}
+
+.workout-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.workout-item .workout-btn {
+  flex: 1;
+}
+
+.delete-btn {
+
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.delete-btn:hover {
+  color: #ff1744;
+}
+
+
+.delete-message {
+  margin: 1rem 0;
+  text-align: center;
+  color: #ff5252;
 }
