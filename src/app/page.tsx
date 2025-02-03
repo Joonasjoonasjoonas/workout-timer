@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { SpeakerWaveIcon, SpeakerXMarkIcon} from '@heroicons/react/24/outline';
+import { SpeakerWaveIcon, SpeakerXMarkIcon, TrashIcon} from '@heroicons/react/24/outline';
 import { FolderPlusIcon, FolderOpenIcon} from '@heroicons/react/24/solid';
 import { Step } from '@/types/StepItem';
 import { formatTime, isValidTimeFormat } from '@/utils/utils';
@@ -398,6 +398,15 @@ export default function Page() {
     }
   };
 
+  // Add new state for empty workout modal
+  const [isEmptyWorkoutModalOpen, setIsEmptyWorkoutModalOpen] = useState(false);
+
+  // Add handler for emptying workout
+  const handleEmptyWorkout = () => {
+    setSteps([]);
+    setIsEmptyWorkoutModalOpen(false);
+  };
+
   return (
     <div className="app">
       <div className="container">
@@ -411,6 +420,12 @@ export default function Page() {
                 <FolderPlusIcon className="w-4 h-4" />
               </button>
               <button onClick={() => setIsLoadModalOpen(true)}><FolderOpenIcon className="w-4 h-4" /></button>
+              <button
+                onClick={() => setIsEmptyWorkoutModalOpen(true)}
+                className="icon-button"
+              >
+                <TrashIcon className="w-4 h-4" />
+              </button>
             </div>
           </div>
           
@@ -569,6 +584,30 @@ export default function Page() {
         workouts={savedWorkouts}
         setWorkouts={setSavedWorkouts}
       />
+      <div className="modal-overlay" style={{ display: isEmptyWorkoutModalOpen ? 'flex' : 'none' }}>
+        <div className="modal">
+          <h2>Delete workout</h2>
+          <p style={{ margin: '1rem 0', textAlign: 'center' , color: '#ff5252'}}>
+            Are you sure you want to delete the workout program?
+          </p>
+          <div className="button-group">
+            <button 
+              onClick={() => setIsEmptyWorkoutModalOpen(false)}
+              className="btn"
+              style={{ backgroundColor: '#ff5252' }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEmptyWorkout}
+              className="btn"
+              style={{ backgroundColor: '#4CAF50' }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 } 
