@@ -417,14 +417,14 @@ export default function Page() {
             <span>Description</span>
             <div className="input-section-top-buttons">
               <button onClick={() => setIsSaveModalOpen(true)}>
-                <FolderPlusIcon className="w-4 h-4" />
+                <FolderPlusIcon className="icon-button w-4 h-4" />
               </button>
-              <button onClick={() => setIsLoadModalOpen(true)}><FolderOpenIcon className="w-4 h-4" /></button>
+              <button onClick={() => setIsLoadModalOpen(true)}><FolderOpenIcon className="icon-button w-4 h-4" /></button>
               <button
                 onClick={() => setIsEmptyWorkoutModalOpen(true)}
                 className="icon-button"
               >
-                <TrashIcon className="w-4 h-4" />
+                <TrashIcon className="icon-button-delete w-4 h-4" />
               </button>
             </div>
           </div>

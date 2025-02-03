@@ -707,3 +707,15 @@ body {
   display: flex;
   width: 100%;
 }
+
+.icon-button {
+  color: #b9c2d3;
+}
+
+.icon-button:hover {
+  color: #ffffff;
+}
+
+.icon-button-delete:hover {
+  color: #ff5252;
+}
