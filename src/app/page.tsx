@@ -14,76 +14,14 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
 import { Step } from '@/types/StepItem';
 import { formatTime, isValidTimeFormat } from '@/utils/utils';
-import { WebKitWindow } from '@/types/WebKitWindow';
-
-interface SortableStepItemProps {
-  step: Step;
-  index: number;
-  removeStep: (id: number) => void;
-}
-
-function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: step.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  const handleRemoveClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    removeStep(step.id);
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`step-item ${step.type === 'pause' ? 'pause' : ''}`}
-    >
-      <div {...attributes} {...listeners} className="step-content">
-        <span className="step-number">{index + 1}</span>
-        <p className="step-text">{step.text}</p>
-        <p className="step-duration">{formatTime(step.duration.value)}</p>
-      </div>
-      <button
-        onClick={handleRemoveClick}
-        className="remove-btn"
-      >
-        ×
-      </button>
-    </div>
-  );
-}
-
-
-
-// Create single AudioContext instance
-let audioCtx: AudioContext | null = null;
-
-const getAudioContext = () => {
-  if (!audioCtx) {
-    const AudioContextClass = window.AudioContext || 
-      (window as unknown as WebKitWindow).webkitAudioContext;
-    audioCtx = new AudioContextClass();
-  }
-  return audioCtx;
-};
-
-
+import { useAudio } from '@/hooks/useAudio';
+import SortableStepItem from '@/components/SortableStepItem';
 
 export default function Page() {
   // Remove unused timeUnit state
@@ -103,65 +41,7 @@ export default function Page() {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
-
-  // Define sound functions inside component to use in dependencies
-  const playStartBeep = () => {
-    if (!isSoundEnabled) return;
-    try {
-      const ctx = getAudioContext();
-      const oscillator = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      
-      oscillator.frequency.value = 1000;
-      
-      gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.01);
-      gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.39);
-      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
-      
-      oscillator.start(ctx.currentTime);
-      oscillator.stop(ctx.currentTime + 0.4);
-      
-      setTimeout(() => {
-        oscillator.disconnect();
-        gainNode.disconnect();
-      }, 500);
-    } catch (error) {
-      console.error('Audio error:', error);
-    }
-  };
-
-  const playCountdownBeep = () => {
-    if (!isSoundEnabled) return;
-    try {
-      const ctx = getAudioContext();
-      const oscillator = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      
-      oscillator.frequency.value = 800;
-      
-      gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.005);
-      gainNode.gain.setValueAtTime(0.1, ctx.currentTime + 0.095);
-      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
-      
-      oscillator.start(ctx.currentTime);
-      oscillator.stop(ctx.currentTime + 0.1);
-      
-      setTimeout(() => {
-        oscillator.disconnect();
-        gainNode.disconnect();
-      }, 200);
-    } catch (error) {
-      console.error('Audio error:', error);
-    }
-  };
+  const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
 
   // Load steps from localStorage on initial render
   useEffect(() => {
