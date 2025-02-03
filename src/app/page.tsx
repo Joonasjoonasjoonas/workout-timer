@@ -25,6 +25,7 @@ import { useAudio } from '@/hooks/useAudio';
 import SortableStepItem from '@/components/SortableStepItem';
 import { TotalRounds } from '@/components/TotalRounds';
 import { SaveWorkoutModal } from '@/components/SaveWorkoutModal';
+import { LoadWorkoutModal } from '@/components/LoadWorkoutModal';
 
 export default function Page() {
   // Remove unused timeUnit state
@@ -32,6 +33,7 @@ export default function Page() {
   const [timeValue, setTimeValue] = useState('');
   const [steps, setSteps] = useState<Step[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -372,11 +374,20 @@ export default function Page() {
       });
     }
   };
-  const handleSaveWorkout = (name: string) => {
-    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts') || '{}');
-    savedWorkouts[name] = steps;
-    localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
+  const handleSaveWorkout = (workoutName: string) => {
+    const savedWorkouts = localStorage.getItem('savedWorkouts');
+    const workouts = savedWorkouts ? JSON.parse(savedWorkouts) : {};
+    
+    workouts[workoutName] = steps;
+    localStorage.setItem('savedWorkouts', JSON.stringify(workouts));
     setIsSaveModalOpen(false);
+  };
+
+  const handleLoadWorkout = (loadedSteps: Step[]) => {
+    if (Array.isArray(loadedSteps) && loadedSteps.length > 0) {
+      setSteps(loadedSteps);
+      setIsLoadModalOpen(false);
+    }
   };
 
   return (
@@ -391,7 +402,7 @@ export default function Page() {
               <button onClick={() => setIsSaveModalOpen(true)}>
                 <FolderPlusIcon className="w-4 h-4" />
               </button>
-              <button><FolderOpenIcon className="w-4 h-4" /></button>
+              <button onClick={() => setIsLoadModalOpen(true)}><FolderOpenIcon className="w-4 h-4" /></button>
             </div>
           </div>
           
@@ -543,6 +554,11 @@ export default function Page() {
         onClose={() => setIsSaveModalOpen(false)}
         onSave={handleSaveWorkout}
       />
+      <LoadWorkoutModal
+  isOpen={isLoadModalOpen}
+  onClose={() => setIsLoadModalOpen(false)}
+  onLoad={handleLoadWorkout}
+/>
     </div>
   );
 } 

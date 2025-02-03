@@ -610,3 +610,31 @@ body {
   outline: none;
   box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
 }
+
+.workout-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.workout-btn {
+  padding: 1rem;
+  background-color: #3d3d3d;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.workout-btn:hover {
+  background-color: #4a4a4a;
+}
+
+.workout-btn.selected {
+  background-color: #2196F3;
+}
