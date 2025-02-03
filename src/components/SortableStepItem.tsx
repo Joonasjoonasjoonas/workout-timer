@@ -6,9 +6,10 @@ interface SortableStepItemProps {
   step: Step;
   index: number;
   removeStep: (id: number) => void;
+  editStep: (id: number) => void;
 }
 
-function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
+function SortableStepItem({ step, index, removeStep, editStep    }: SortableStepItemProps) {
   const {
     attributes,
     listeners,
@@ -38,6 +39,7 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
         <p className="step-text">{step.text}</p>
         <p className="step-duration">{formatTime(step.duration.value)}</p>
       </div>
+      <button onClick={() => editStep(step.id)} className="edit-btn">edit</button>
       <button
         onClick={handleRemoveClick}
         className="remove-btn"

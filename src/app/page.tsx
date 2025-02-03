@@ -39,6 +39,8 @@ export default function Page() {
   const [currentRepeat, setCurrentRepeat] = useState(1);
   const [repeatCount, setRepeatCount] = useState('');
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
@@ -243,15 +245,15 @@ export default function Page() {
     );
   };
 
-  // Update addStep function
-  const addStep = (type: 'text' | 'pause') => {
+
+  const addOrSaveStep = (type: 'text' | 'pause') => {
     if (!timeValue || timeValue === ':') return;
     
     const totalSeconds = convertTimeToSeconds(timeValue);
     if (totalSeconds <= 0) return;
     
     const newStep: Step = {
-      id: Date.now(),
+      id: editingId || Date.now(),
       type: type,
       text: type === 'text' ? currentText : 'PAUSE',
       duration: {
@@ -259,16 +261,35 @@ export default function Page() {
         unit: 'seconds' as const
       }
     };
-    setSteps([...steps, newStep]);
-    
-    if (type === 'pause') {
-      setCurrentText('');
+
+    if (isEditing) {
+      setSteps(steps.map(step => step.id === editingId ? newStep : step));
+    } else {
+      setSteps([...steps, newStep]);
     }
+    
+    // Reset form and editing state
+    setCurrentText('');
+    setTimeValue('');
+    setIsEditing(false);
+    setEditingId(null); // Reset editing ID
   };
 
   const removeStep = (id: number) => {
     setSteps(steps.filter(step => step.id !== id));
   };
+
+  const editStep = (id: number) => {
+    const stepToEdit = steps.find(step => step.id === id);
+    if (stepToEdit) {
+      setCurrentText(stepToEdit.text);
+      setTimeValue(formatTime(stepToEdit.duration.value));
+      setIsEditing(true);
+      setEditingId(id); // Set the editing ID
+    }
+  };
+
+
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -324,14 +345,14 @@ export default function Page() {
 
           <div className="button-group">
             <button 
-              onClick={() => addStep('text')} 
+              onClick={() => addOrSaveStep('text')} 
               className={`btn ${(!currentText || !timeValue) ? 'disabled' : ''}`}
               disabled={!currentText || !timeValue}
             >
-              Add Exercise
+              {isEditing ? 'Save' : 'Add Exercise'}
             </button>
             <button 
-              onClick={() => addStep('pause')} 
+              onClick={() => addOrSaveStep('pause')} 
               className={`btn pause-btn ${!timeValue ? 'disabled' : ''}`}
               disabled={!timeValue}
             >
@@ -375,6 +396,7 @@ export default function Page() {
                   step={step}
                   index={index}
                   removeStep={removeStep}
+                  editStep={editStep}
                 />
               ))}
             </div>
