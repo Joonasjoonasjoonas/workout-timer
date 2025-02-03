@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
+import { SpeakerWaveIcon, SpeakerXMarkIcon} from '@heroicons/react/24/outline';
 import { Step } from '@/types/StepItem';
 import { formatTime, isValidTimeFormat } from '@/utils/utils';
 import { useAudio } from '@/hooks/useAudio';
@@ -328,7 +328,7 @@ export default function Page() {
           />
           
           <div className="time-input">
-            Single exercise or pause duration 
+            Exercise or pause duration 
             <input
               ref={timeInputRef}
               type="text"

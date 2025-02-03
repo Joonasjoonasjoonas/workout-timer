@@ -2,6 +2,8 @@ import { Step } from "@/types/StepItem";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { formatTime } from '@/utils/utils';
+import { PencilIcon } from '@heroicons/react/24/outline';
+
 interface SortableStepItemProps {
   step: Step;
   index: number;
@@ -39,7 +41,9 @@ function SortableStepItem({ step, index, removeStep, editStep    }: SortableStep
         <p className="step-text">{step.text}</p>
         <p className="step-duration">{formatTime(step.duration.value)}</p>
       </div>
-      <button onClick={() => editStep(step.id)} className="edit-btn">edit</button>
+      <button onClick={() => editStep(step.id)} className="edit-btn">
+        <PencilIcon className="w-4 h-4" />
+      </button>
       <button
         onClick={handleRemoveClick}
         className="remove-btn"
