@@ -654,23 +654,56 @@ body {
 
 .delete-btn {
 
-
+  background-color: transparent;
   border: none;
   border-radius: 8px;
-
+  color: #ff5252;
   cursor: pointer;
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.delete-btn:hover {
-  color: #ff1744;
-}
 
+.delete-btn:hover {
+  background-color: #ff525220;
+}
 
 .delete-message {
   margin: 1rem 0;
   text-align: center;
   color: #ff5252;
+}
+
+.workout-btn-container {
+  flex: 1;
+  padding: 1rem;
+  background-color: #3d3d3d;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.workout-btn-container:hover {
+  background-color: #4a4a4a;
+}
+
+.workout-btn-container.selected {
+  background-color: #2196F3;
+}
+
+.workout-name {
+  flex: 1;
+  text-align: left;
+}
+
+.workout-item {
+  display: flex;
+  width: 100%;
 }

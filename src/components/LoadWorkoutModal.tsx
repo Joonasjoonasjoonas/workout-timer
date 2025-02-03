@@ -68,8 +68,8 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
   // Reset selection when modal opens
   useEffect(() => {
     if (isOpen) {
-        setSelectedWorkout(null);
-        setIsDeleteMode(false);
+      setSelectedWorkout(null);
+      setIsDeleteMode(false);
     }
   }, [isOpen]);
 
@@ -116,19 +116,23 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
               </button>
               {Object.keys(workouts).map((name) => (
                 <div key={name} className="workout-item">
-                  <button
-                    className={`workout-btn ${selectedWorkout === name ? 'selected' : ''}`}
+                  <div 
+                    className={`workout-btn-container ${selectedWorkout === name ? 'selected' : ''}`}
                     onClick={() => setSelectedWorkout(name)}
                   >
-                    {name}
-                    <button
-                    onClick={() => handleDeleteClick(name)}
+                    <span className="workout-name">{name}</span>
+                     <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(name);
+                    }}
                     className="delete-btn"
+                    aria-label={`Delete ${name}`}
                   >
                     <TrashIcon className="w-4 h-4" />
                   </button>
-                  </button>
-                  
+                  </div>
+                 
                 </div>
               ))}
             </div>
