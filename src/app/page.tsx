@@ -349,12 +349,12 @@ export default function Page() {
               className={`btn ${(!currentText || !timeValue) ? 'disabled' : ''}`}
               disabled={!currentText || !timeValue}
             >
-              {isEditing ? 'Save' : 'Add Exercise'}
+              {isEditing ? 'Save Exercise' : 'Add Exercise'}
             </button>
             <button 
               onClick={() => addOrSaveStep('pause')} 
-              className={`btn pause-btn ${!timeValue ? 'disabled' : ''}`}
-              disabled={!timeValue}
+              className={`btn pause-btn ${!timeValue || isEditing ? 'disabled' : ''}`}
+              disabled={!timeValue || isEditing}
             >
               Add Pause
             </button>
@@ -370,8 +370,8 @@ export default function Page() {
             </button>
             <button 
               onClick={startExercise}
-              className={`start-btn ${steps.length === 0 ? 'disabled' : ''}`}
-              disabled={steps.length === 0}
+              className={`start-btn ${steps.length === 0 || isEditing ? 'disabled' : ''}`}
+              disabled={steps.length === 0 || isEditing}
             >
               Start Workout
             </button>
