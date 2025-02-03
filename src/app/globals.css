@@ -530,3 +530,55 @@ body {
   outline: none;
   box-shadow: none;
 }
+
+.total-rounds {
+  background-color: #3d3d3d;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.total-rounds-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.total-rounds-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+
+  text-align: center;
+}
+
+.round-btn {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.round-btn:hover:not(:disabled) {
+  background-color: #1976D2;
+}
+
+.round-btn:disabled {
+  background-color: #2196F350;
+  cursor: not-allowed;
+}
+
+.round-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
+}

@@ -22,6 +22,7 @@ import { Step } from '@/types/StepItem';
 import { formatTime, isValidTimeFormat } from '@/utils/utils';
 import { useAudio } from '@/hooks/useAudio';
 import SortableStepItem from '@/components/SortableStepItem';
+import { TotalRounds } from '@/components/TotalRounds';
 
 export default function Page() {
   // Remove unused timeUnit state
@@ -457,6 +458,12 @@ export default function Page() {
                   editStep={editStep}
                 />
               ))}
+              {steps.length > 0 && (
+                <TotalRounds
+                  repeatCount={repeatCount}
+                  setRepeatCount={setRepeatCount}
+                />
+              )}
             </div>
           </SortableContext>
         </DndContext>
