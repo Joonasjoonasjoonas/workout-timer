@@ -1,0 +1,5 @@
+-  marginia lisää mobiilityyleissä sivuille ja pienemmäksi appiksen otsikkoa (pitää mahtua yhdelle rville
+- paussi nappula workoutin ajalle
+- ääninappulalle eri väri että erottuu paremmin
+- nappeja ei disabloida vaan jos painaa nappia niin reunustetaan vaadittava inputfieldi ja kuvaus sen alle että tämä on vaadittu
+- ajansyöttö inputtia jotenkin intuitiivisemmaksi: esim nyt jos painaa : niin se syöttää kaks nollaa perään
