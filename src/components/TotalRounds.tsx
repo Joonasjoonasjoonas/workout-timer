@@ -18,13 +18,15 @@ export function TotalRounds({ repeatCount, setRepeatCount }: TotalRoundsProps) {
     }
   };
 
+  const currentValue = parseInt(repeatCount) || 1;
+
   return (
     <div className="total-rounds">
       <div className="total-rounds-controls">
         <button 
           onClick={handleDecrement}
           className="round-btn"
-          disabled={parseInt(repeatCount) === 1}
+          disabled={currentValue <= 1}
         >
           <MinusIcon className="w-4 h-4" />
         </button>
