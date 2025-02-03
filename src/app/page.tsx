@@ -20,9 +20,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
 import { Step } from '@/types/StepItem';
-import { formatTime } from '@/utils/utils';
-
-
+import { formatTime, isValidTimeFormat } from '@/utils/utils';
+import { WebKitWindow } from '@/types/WebKitWindow';
 
 interface SortableStepItemProps {
   step: Step;
@@ -70,10 +69,7 @@ function SortableStepItem({ step, index, removeStep }: SortableStepItemProps) {
   );
 }
 
-// Define WebKit audio context type properly
-interface WebKitWindow extends Window {
-  webkitAudioContext: typeof AudioContext;
-}
+
 
 // Create single AudioContext instance
 let audioCtx: AudioContext | null = null;
@@ -87,14 +83,7 @@ const getAudioContext = () => {
   return audioCtx;
 };
 
-// Add this before the component
-const isValidTimeFormat = (value: string): boolean => {
-  // Allow empty input
-  if (value === '') return true;
-  
-  // Allow single digit or proper MM:SS format
-  return /^\d{0,2}(:\d{0,2})?$/.test(value);
-};
+
 
 export default function Page() {
   // Remove unused timeUnit state
