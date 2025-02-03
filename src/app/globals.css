@@ -302,6 +302,13 @@ h1 {
   touch-action: none;
 }
 
+/* Add focus styles for step items */
+.step-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
+  border-radius: 10px; /* Match the step-item border radius */
+}
+
 .step-content {
   padding: 1rem;
   display: flex;
@@ -309,6 +316,7 @@ h1 {
   gap: 1rem;
   flex: 1;
   cursor: grab;
+  border-radius: 10px; /* Match parent border radius */
 }
 
 .step-content:active {
