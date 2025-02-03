@@ -106,7 +106,7 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
       <div className="modal">
         {!isDeleteMode ? (
           <>
-            <h2>Load workout program</h2>
+            <h2>Load workout</h2>
             <div className="workout-list">
               <button
                 className={`workout-btn ${selectedWorkout === 'example' ? 'selected' : ''}`}
@@ -158,7 +158,7 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
           </>
         ) : (
           <>
-            <h2>Remove workout program?</h2>
+            <h2>Remove workout</h2>
             <p className="delete-message">Are you sure you want to remove "{selectedWorkout}"?</p>
             <div className="button-group" style={{ marginTop: '1rem' }}>
               <button 
