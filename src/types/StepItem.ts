@@ -1,6 +1,6 @@
 export interface Step {
   id: number;
-  type: 'text' | 'pause';
+  type: 'exercise' | 'pause';
   text: string;
   duration: {
     value: number;

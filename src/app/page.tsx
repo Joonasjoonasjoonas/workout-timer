@@ -246,7 +246,7 @@ export default function Page() {
   };
 
 
-  const addOrSaveStep = (type: 'text' | 'pause') => {
+  const addOrSaveStep = (type: 'exercise' | 'pause') => {
     if (!timeValue || timeValue === ':') return;
     
     const totalSeconds = convertTimeToSeconds(timeValue);
@@ -255,7 +255,7 @@ export default function Page() {
     const newStep: Step = {
       id: editingId || Date.now(),
       type: type,
-      text: type === 'text' ? currentText : 'PAUSE',
+      text: type === 'exercise' ? currentText : 'PAUSE',
       duration: {
         value: totalSeconds,
         unit: 'seconds' as const
@@ -345,7 +345,7 @@ export default function Page() {
 
           <div className="button-group">
             <button 
-              onClick={() => addOrSaveStep('text')} 
+              onClick={() => addOrSaveStep('exercise')} 
               className={`btn ${(!currentText || !timeValue) ? 'disabled' : ''}`}
               disabled={!currentText || !timeValue}
             >
