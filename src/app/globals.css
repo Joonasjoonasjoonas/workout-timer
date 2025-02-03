@@ -28,8 +28,10 @@ body {
 }
 
 .container {
+
   max-width: 600px;
   margin: 0 auto;
+  padding-top: 1rem;  
 }
 
 h1 {

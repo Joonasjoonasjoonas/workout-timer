@@ -410,7 +410,7 @@ export default function Page() {
   return (
     <div className="app">
       <div className="container">
-        <h1>Workout Timer</h1>
+        <h1>FREE Workout Timer</h1>
            
         <div className="input-section">
           <div className="input-section-top">
