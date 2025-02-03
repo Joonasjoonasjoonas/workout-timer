@@ -368,8 +368,18 @@ h1 {
 .remove-btn {
   background: none;
   border: none;
-  color: #ff5252;
   font-size: 1.5rem;
+  cursor: pointer;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
   cursor: pointer;
   padding: 1rem;
   display: flex;
@@ -380,6 +390,10 @@ h1 {
 
 .remove-btn:hover {
   color: #ff1744;
+}
+
+.edit-btn:hover {
+  color:   #4CAF50;
 }
 
 /* Reset default styles */

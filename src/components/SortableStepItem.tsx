@@ -2,8 +2,7 @@ import { Step } from "@/types/StepItem";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { formatTime } from '@/utils/utils';
-import { PencilIcon } from '@heroicons/react/24/outline';
-
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 interface SortableStepItemProps {
   step: Step;
   index: number;
@@ -48,7 +47,7 @@ function SortableStepItem({ step, index, removeStep, editStep    }: SortableStep
         onClick={handleRemoveClick}
         className="remove-btn"
       >
-        ×
+        <TrashIcon className="w-4 h-4" />
       </button>
     </div>
   );
