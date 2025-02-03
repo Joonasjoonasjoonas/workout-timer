@@ -39,7 +39,10 @@ export default function Page() {
   const [currentRepeat, setCurrentRepeat] = useState(1);
   const [repeatCount, setRepeatCount] = useState('');
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<{ active: boolean; type: 'exercise' | 'pause' | null }>({
+    active: false,
+    type: null
+  });
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
@@ -262,7 +265,7 @@ export default function Page() {
       }
     };
 
-    if (isEditing) {
+    if (isEditing.active) {
       setSteps(steps.map(step => step.id === editingId ? newStep : step));
     } else {
       setSteps([...steps, newStep]);
@@ -271,8 +274,8 @@ export default function Page() {
     // Reset form and editing state
     setCurrentText('');
     setTimeValue('');
-    setIsEditing(false);
-    setEditingId(null); // Reset editing ID
+    setIsEditing({ active: false, type: null });
+    setEditingId(null);
   };
 
   const removeStep = (id: number) => {
@@ -284,8 +287,8 @@ export default function Page() {
     if (stepToEdit) {
       setCurrentText(stepToEdit.text);
       setTimeValue(formatTime(stepToEdit.duration.value));
-      setIsEditing(true);
-      setEditingId(id); // Set the editing ID
+      setIsEditing({ active: true, type: stepToEdit.type });
+      setEditingId(id);
     }
   };
 
@@ -346,17 +349,17 @@ export default function Page() {
           <div className="button-group">
             <button 
               onClick={() => addOrSaveStep('exercise')} 
-              className={`btn ${(!currentText || !timeValue) ? 'disabled' : ''}`}
-              disabled={!currentText || !timeValue}
+              className={`btn ${(!currentText || !timeValue || (isEditing.active && isEditing.type === 'pause')) ? 'disabled' : ''}`}
+              disabled={!currentText || !timeValue || (isEditing.active && isEditing.type === 'pause')}
             >
-              {isEditing ? 'Save Exercise' : 'Add Exercise'}
+              {isEditing.active && isEditing.type === 'exercise' ? 'Save Exercise' : 'Add Exercise'}
             </button>
             <button 
               onClick={() => addOrSaveStep('pause')} 
-              className={`btn pause-btn ${!timeValue || isEditing ? 'disabled' : ''}`}
-              disabled={!timeValue || isEditing}
+              className={`btn pause-btn ${!timeValue || (isEditing.active && isEditing.type === 'exercise') ? 'disabled' : ''}`}
+              disabled={!timeValue || (isEditing.active && isEditing.type === 'exercise')}
             >
-              Add Pause
+              {isEditing.active && isEditing.type === 'pause' ? 'Save Pause' : 'Add Pause'}
             </button>
              <button
               onClick={() => setIsSoundEnabled(!isSoundEnabled)}
@@ -370,8 +373,8 @@ export default function Page() {
             </button>
             <button 
               onClick={startExercise}
-              className={`start-btn ${steps.length === 0 || isEditing ? 'disabled' : ''}`}
-              disabled={steps.length === 0 || isEditing}
+              className={`start-btn ${steps.length === 0 || isEditing.active ? 'disabled' : ''}`}
+              disabled={steps.length === 0 || isEditing.active}
             >
               Start Workout
             </button>
