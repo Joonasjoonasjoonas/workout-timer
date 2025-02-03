@@ -64,7 +64,7 @@ h1 {
   overflow-y: auto;
   background-color: #3d3d3d;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   color: #fff;
   font-size: 1rem;
   line-height: 1.5;
@@ -79,7 +79,7 @@ h1 {
 
 .text-input::-webkit-scrollbar-thumb {
   background-color: #4CAF50;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 .text-input::-webkit-scrollbar-thumb:hover {
@@ -88,7 +88,7 @@ h1 {
 
 .text-input::-webkit-scrollbar-track {
   background-color: #2d2d2d;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 .text-input {
@@ -117,7 +117,7 @@ h1 {
 .select-input {
   padding: 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   width: 100%;
   font-size: 1rem;
   font-weight: 500;
@@ -131,7 +131,7 @@ h1 {
   min-width: 0; /* Prevents buttons from overflowing */
   padding: 0.75rem 0.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
@@ -157,7 +157,7 @@ h1 {
   min-width: 0; /* Prevents buttons from overflowing */
   padding: 0.75rem 0.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
@@ -183,7 +183,7 @@ h1 {
   min-width: 0; /* Prevents buttons from overflowing */
   padding: 0.75rem 0.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
@@ -209,7 +209,7 @@ h1 {
   min-width: 0; /* Prevents buttons from overflowing */
   padding: 0.75rem 0.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
@@ -293,7 +293,7 @@ h1 {
 
 .step-item {
   background-color: #3d3d3d;  
-  border-radius: 5px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -335,7 +335,7 @@ h1 {
   color: white;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -425,7 +425,7 @@ body {
   width: 100%;
   height: 10px;
   background-color: #2d2d2d;
-  border-radius: 5px;
+  border-radius: 10px;
   overflow: hidden;
   margin: 1rem 0;
 }
@@ -441,7 +441,7 @@ body {
   background-color: #ff5252;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
@@ -468,7 +468,7 @@ body {
   color: #fff;
   cursor: pointer;
   padding: 8px;
-  border-radius: 50%;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -491,7 +491,7 @@ body {
 .sound-toggle:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 /* Focus styles for edit and remove buttons */
@@ -499,7 +499,7 @@ body {
 .remove-btn:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 /* Focus styles for inputs */
@@ -508,7 +508,7 @@ body {
 .select-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.8);
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 /* Ensure focus is visible even when using mouse */
