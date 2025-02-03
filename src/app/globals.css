@@ -56,6 +56,19 @@ h1 {
   margin-bottom: 1rem;
 }
 
+.input-section-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-section-top-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .text-input {
   padding: 1rem;
   width: 100%;

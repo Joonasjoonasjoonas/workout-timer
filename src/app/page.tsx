@@ -18,6 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import { SpeakerWaveIcon, SpeakerXMarkIcon} from '@heroicons/react/24/outline';
+import { FolderPlusIcon, FolderOpenIcon} from '@heroicons/react/24/solid';
 import { Step } from '@/types/StepItem';
 import { formatTime, isValidTimeFormat } from '@/utils/utils';
 import { useAudio } from '@/hooks/useAudio';
@@ -375,9 +376,15 @@ export default function Page() {
       <div className="container">
         <h1>Workout Timer</h1>
            
-        
         <div className="input-section">
-          Description 
+          <div className="input-section-top">
+            <span>Description</span>
+            <div className="input-section-top-buttons">
+              <button><FolderPlusIcon className="w-4 h-4" /></button>
+              <button><FolderOpenIcon className="w-4 h-4" /></button>
+            </div>
+          </div>
+          
        
           <textarea
             value={currentText}
