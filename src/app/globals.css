@@ -584,6 +584,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .total-rounds-controls {
@@ -734,10 +735,19 @@ body {
 }
 
 /* Add styles for when editing is active */
-.editing-active .step-item {
+.editing-active .step-item,
+.editing-active + .total-rounds {
   background-color: #2d2d2d;
   pointer-events: none;
   cursor: not-allowed;
+}
+
+.editing-active + .total-rounds .round-btn {
+  opacity: 0.5;
+}
+
+.editing-active + .total-rounds .total-rounds-text {
+  color: #888888;
 }
 
 /* For exercise items (default blue theme) */
@@ -776,4 +786,17 @@ body {
 .editing-active .step-item .edit-btn,
 .editing-active .step-item .remove-btn {
   opacity: 0.5;
+}
+
+.workout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Same gap as between step items */
+}
+
+/* Keep existing styles */
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

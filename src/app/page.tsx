@@ -493,24 +493,33 @@ export default function Page() {
          
         </div>
 
-        <div className={`steps-container ${isEditing.active ? 'editing-active' : ''}`}>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={steps.map(step => step.id)} strategy={verticalListSortingStrategy}>
-              {steps.map((step, index) => (
-                <SortableStepItem
-                  key={step.id}
-                  step={step}
-                  index={index}
-                  removeStep={removeStep}
-                  editStep={editStep}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+        <div className="workout-section">
+          <div className={`steps-container ${isEditing.active ? 'editing-active' : ''}`}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={steps.map(step => step.id)} strategy={verticalListSortingStrategy}>
+                {steps.map((step, index) => (
+                  <SortableStepItem
+                    key={step.id}
+                    step={step}
+                    index={index}
+                    removeStep={removeStep}
+                    editStep={editStep}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+          
+          {steps.length > 0 && (
+            <TotalRounds
+              repeatCount={repeatCount}
+              setRepeatCount={setRepeatCount}
+            />
+          )}
         </div>
 
         {isModalOpen && (
