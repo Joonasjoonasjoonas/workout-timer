@@ -461,15 +461,13 @@ export default function Page() {
           <div className="button-group">
             <button 
               onClick={() => addOrSaveStep('exercise')} 
-              className={`btn ${(!currentText || !timeValue || (isEditing.active && isEditing.type === 'pause')) ? 'disabled' : ''}`}
-              disabled={!currentText || !timeValue || (isEditing.active && isEditing.type === 'pause')}
+              className="btn"
             >
               {isEditing.active && isEditing.type === 'exercise' ? 'Save Exercise' : 'Add Exercise'}
             </button>
             <button 
               onClick={() => addOrSaveStep('pause')} 
-              className={`btn pause-btn ${!timeValue || (isEditing.active && isEditing.type === 'exercise') ? 'disabled' : ''}`}
-              disabled={!timeValue || (isEditing.active && isEditing.type === 'exercise')}
+              className={`btn pause-btn ${isEditing.active ? 'disabled' : ''}`}
             >
               {isEditing.active && isEditing.type === 'pause' ? 'Save Pause' : 'Add Pause'}
             </button>
@@ -495,16 +493,13 @@ export default function Page() {
          
         </div>
 
-        <DndContext
-         sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={steps.map(step => step.id)}
-            strategy={verticalListSortingStrategy}
+        <div className={`steps-container ${isEditing.active ? 'editing-active' : ''}`}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            <div className="steps-list">
+            <SortableContext items={steps.map(step => step.id)} strategy={verticalListSortingStrategy}>
               {steps.map((step, index) => (
                 <SortableStepItem
                   key={step.id}
@@ -514,15 +509,9 @@ export default function Page() {
                   editStep={editStep}
                 />
               ))}
-              {steps.length > 0 && (
-                <TotalRounds
-                  repeatCount={repeatCount}
-                  setRepeatCount={setRepeatCount}
-                />
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
+            </SortableContext>
+          </DndContext>
+        </div>
 
         {isModalOpen && (
           <div className="modal-overlay">

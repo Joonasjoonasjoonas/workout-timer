@@ -146,11 +146,8 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
               </button>
               <button
                 onClick={handleLoad}
-                className={`btn ${!selectedWorkout ? 'disabled' : ''}`}
-                disabled={!selectedWorkout}
-                style={{ 
-                  backgroundColor: selectedWorkout ? '#4CAF50' : '#2d4c2f'
-                }}
+                className="btn"
+                style={{ backgroundColor: '#4CAF50' }}
               >
                 Load
               </button>

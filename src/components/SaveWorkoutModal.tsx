@@ -40,11 +40,8 @@ export function SaveWorkoutModal({ isOpen, onClose, onSave }: SaveWorkoutModalPr
           </button>
           <button
             onClick={handleSave}
-            className={`btn ${!workoutName.trim() ? 'disabled' : ''}`}
-            disabled={!workoutName.trim()}
-            style={{ 
-              backgroundColor: workoutName.trim() ? '#4CAF50' : '#2d4c2f'
-            }}
+            className="btn"
+            style={{ backgroundColor: '#4CAF50' }}
           >
             Save
           </button>

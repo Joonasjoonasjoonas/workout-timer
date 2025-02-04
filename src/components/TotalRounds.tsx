@@ -26,7 +26,6 @@ export function TotalRounds({ repeatCount, setRepeatCount }: TotalRoundsProps) {
         <button 
           onClick={handleDecrement}
           className="round-btn"
-          disabled={currentValue <= 1}
         >
           <MinusIcon className="w-4 h-4" />
         </button>

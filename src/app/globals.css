@@ -156,13 +156,8 @@ h1 {
   gap: 0.5rem;
 }
 
-.btn:hover:not(.disabled) {
+.btn:hover {
   background-color: #1976D2;
-}
-
-.btn.disabled {
-  background-color: #2196F350;
-  cursor: not-allowed;
 }
 
 .start-btn {
@@ -182,7 +177,7 @@ h1 {
   gap: 0.5rem;
 }
 
-.start-btn:hover:not(.disabled) {
+.start-btn:hover {
   background-color: #388E3C;
 }
 
@@ -208,8 +203,13 @@ h1 {
   gap: 0.5rem;
 }
 
-.pause-btn:hover:not(.disabled) {
+.pause-btn:hover {
   background-color: #F57C00;
+}
+
+.pause-btn.editing {
+  background-color: #2d4c2f;
+  pointer-events: none;
 }
 
 .pause-btn.disabled {
@@ -615,13 +615,8 @@ body {
   transition: background-color 0.2s;
 }
 
-.round-btn:hover:not(:disabled) {
+.round-btn:hover {
   background-color: #1976D2;
-}
-
-.round-btn:disabled {
-  background-color: #2196F350;
-  cursor: not-allowed;
 }
 
 .round-btn:focus {
@@ -736,4 +731,35 @@ body {
 
 .icon-button-delete:hover {
   color: #ff5252;
+}
+
+/* Add styles for when editing is active */
+.editing-active .step-item {
+  background-color: #2d2d2d; /* Darker background */
+  pointer-events: none;
+  cursor: not-allowed;
+  
+}
+
+.editing-active .step-item .edit-btn,
+.editing-active .step-item .remove-btn {
+  opacity: 0.5;
+}
+
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* This ensures gap between items is always present */
+}
+
+/* Keep existing editing styles */
+.editing-active .step-item {
+  background-color: #2d2d2d;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.editing-active .step-item .edit-btn,
+.editing-active .step-item .remove-btn {
+  opacity: 0.5;
 }
