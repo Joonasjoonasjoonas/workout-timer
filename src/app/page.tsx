@@ -58,6 +58,8 @@ export default function Page() {
     return {};
   });
   const [isPaused, setIsPaused] = useState(false);
+  const [showDescriptionError, setShowDescriptionError] = useState(false);
+  const [showDurationError, setShowDurationError] = useState(false);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
@@ -229,50 +231,8 @@ export default function Page() {
 
   // Update time input handler
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const prevValue = timeValue;
-    
-    // Handle backspace
-    if (value.length < prevValue.length) {
-      // If we're deleting the colon, keep the minutes
-      if (prevValue.includes(':') && !value.includes(':')) {
-        setTimeValue(prevValue.split(':')[0]);
-        return;
-      }
-      // Allow normal deletion
-      setTimeValue(value);
-      return;
-    }
-
-    if (isValidTimeFormat(value)) {
-      if (value.length === 2 && !value.includes(':')) {
-        // Add colon after 2 digits for minutes
-        setTimeValue(value + ':');
-      } else if (value.includes(':')) {
-        const [minutes, seconds] = value.split(':');
-        
-        // If minutes are entered and seconds are empty or just completed
-        if (minutes && (!seconds || seconds.length === 2)) {
-          if (!seconds) {
-            // Auto-add '00' for seconds
-            setTimeValue(`${minutes}:00`);
-            return;
-          }
-          
-          // Handle seconds > 59
-          const mins = parseInt(minutes);
-          const secs = parseInt(seconds);
-          if (secs > 59) {
-            setTimeValue(`${(mins + 1).toString().padStart(2, '0')}:00`);
-            return;
-          }
-        }
-        
-        setTimeValue(value);
-      } else {
-        setTimeValue(value);
-      }
-    }
+    setTimeValue(e.target.value);
+    setShowDurationError(false);
   };
 
   // Add useEffect to handle wheel event
@@ -319,8 +279,16 @@ export default function Page() {
 
 
   const addOrSaveStep = (type: 'exercise' | 'pause') => {
-    if (!timeValue || timeValue === ':') return;
+    if (type === 'exercise' && !currentText.trim()) {
+      setShowDescriptionError(true);
+      return;
+    }
     
+    if (!timeValue) {
+      setShowDurationError(true);
+      return;
+    }
+
     const totalSeconds = convertTimeToSeconds(timeValue);
     if (totalSeconds <= 0) return;
     
@@ -412,6 +380,11 @@ export default function Page() {
     setIsPaused(!isPaused);
   };
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentText(e.target.value);
+    setShowDescriptionError(false);
+  };
+
   return (
     <div className="app">
       <div className="container">
@@ -434,28 +407,35 @@ export default function Page() {
             </div>
           </div>
           
-       
-          <textarea
-            value={currentText}
-            onChange={(e) => setCurrentText(e.target.value)}
-            placeholder="Exercise Name or Description (for example: 'Legs', 'Pushups', etc)"
-            className="text-input"
-          />
+          {!isEditing.active || (isEditing.active && isEditing.type === 'exercise') ? (
+            <div className="input-group">
+              <input
+                type="text"
+                value={currentText}
+                onChange={handleTextChange}
+                placeholder="Exercise description (for example: 'Legs', 'Pushups', etc)"
+                className={`text-input ${showDescriptionError ? 'error' : ''}`}
+              />
+              {showDescriptionError && (
+                <span className="error-message">Description is required</span>
+              )}
+            </div>
+          ) : null}
           
-          <div className="time-input">
-            Exercise or pause duration 
+          <div className="input-group">
+            <span>Duration</span>
             <input
-              ref={timeInputRef}
               type="text"
               value={timeValue}
               onChange={handleTimeChange}
               onWheel={handleTimeWheel}
               placeholder="MM:SS"
-              className="number-input"
+              className={`number-input ${showDurationError ? 'error' : ''}`}
               pattern="[0-9]{0,2}:[0-9]{0,2}"
             />
-          
-           
+            {showDurationError && (
+              <span className="error-message">Duration is required</span>
+            )}
           </div>
 
           <div className="button-group">
