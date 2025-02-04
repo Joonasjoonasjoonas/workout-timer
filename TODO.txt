@@ -1,3 +1,2 @@
-- ääninappulalle eri väri että erottuu paremmin
 - nappeja ei disabloida vaan jos painaa nappia niin reunustetaan vaadittava inputfieldi ja kuvaus sen alle että tämä on vaadittu
 - ajansyöttö inputtia jotenkin intuitiivisemmaksi: esim nyt jos painaa : niin se syöttää kaks nollaa perään
