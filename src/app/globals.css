@@ -218,7 +218,7 @@ h1 {
 }
 
 .sound-toggle {
-  background-color: #4a4a4a;
+  background-color: #7B68EE !important; /* Medium slate blue */
   color: white;
   flex: 1;
   min-width: 0; /* Prevents buttons from overflowing */
@@ -234,13 +234,16 @@ h1 {
   gap: 0.5rem;
 }
 
-.sound-toggle:hover:not(.disabled) {
-  background-color: #5a5a5a;
+.sound-toggle:hover {
+  background-color: #6A5ACD !important; /* Darker on hover */
 }
 
-.sound-toggle.disabled {
-  background-color: #4a4a4a50;
-  cursor: not-allowed;
+.sound-toggle.sound-off {
+  background-color: #483D8B !important; /* Darker slate blue when sound is off */
+}
+
+.sound-toggle.sound-off:hover {
+  background-color: #372D6B !important; /* Even darker on hover when sound is off */
 }
 
 /* Mobile styles */
