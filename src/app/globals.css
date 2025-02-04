@@ -275,6 +275,19 @@ h1 {
 
 /* Update responsive styles */
 @media (max-width: 768px) {
+
+  .container {
+    padding:  1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .input-section {
+    margin-top: 1rem;
+  }
+
   .time-input {
     flex-direction: column;
     gap: 1rem;
