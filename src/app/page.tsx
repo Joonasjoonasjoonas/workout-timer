@@ -57,6 +57,7 @@ export default function Page() {
     }
     return {};
   });
+  const [isPaused, setIsPaused] = useState(false);
 
   const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
@@ -142,7 +143,7 @@ export default function Page() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isActive && timeLeft > 0) {
+    if (isActive && timeLeft > 0 && !isPaused) {
       interval = setInterval(() => {
         // Play countdown beep in last 3 seconds
         if (timeLeft <= 4) {
@@ -185,7 +186,7 @@ export default function Page() {
         clearInterval(interval);
       }
     };
-  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount, playStartBeep]);
+  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount, playStartBeep, isPaused]);
 
   const startExercise = () => {
     if (steps.length === 0) return;
@@ -407,6 +408,10 @@ export default function Page() {
     setIsEmptyWorkoutModalOpen(false);
   };
 
+  const handlePauseResume = () => {
+    setIsPaused(!isPaused);
+  };
+
   return (
     <div className="app">
       <div className="container">
@@ -563,11 +568,20 @@ export default function Page() {
                       }}
                     />
                   </div>
+                  <div className="button-group">
+                    <button onClick={stopExercise} className="btn" style={{ backgroundColor: '#ff5252' }}>
+                      Stop
+                    </button>
+                    <button 
+                      onClick={handlePauseResume} 
+                      className="btn"
+                      style={{ backgroundColor: '#FF9800' }}
+                    >
+                      {isPaused ? 'Resume' : 'Pause'}
+                    </button>
+                  </div>
                 </>
               )}
-              <button onClick={stopExercise} className="stop-btn">
-                Stop
-              </button>
             </div>
           </div>
         )}
