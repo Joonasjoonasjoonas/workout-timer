@@ -735,10 +735,24 @@ body {
 
 /* Add styles for when editing is active */
 .editing-active .step-item {
-  background-color: #2d2d2d; /* Darker background */
+  background-color: #2d2d2d;
   pointer-events: none;
   cursor: not-allowed;
-  
+}
+
+/* For exercise items (default blue theme) */
+.editing-active .step-item .step-number {
+  background-color: #1a365d; /* Darker shade of blue */
+}
+
+/* For pause items */
+.editing-active .step-item.pause .step-number {
+  background-color: #2d4c2f; /* Darker shade of green */
+}
+
+.editing-active .step-item .step-text,
+.editing-active .step-item .step-duration {
+  color: #888888; /* Slightly darker than normal but still readable */
 }
 
 .editing-active .step-item .edit-btn,
