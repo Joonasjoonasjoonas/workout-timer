@@ -228,11 +228,57 @@ export default function Page() {
     setFinishCountdown(3);
     setCurrentRepeat(1);
   };
-
   // Update time input handler
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTimeValue(e.target.value);
+    let value = e.target.value;
+    const cursorPosition = e.target.selectionStart || 0;
+    const previousValue = timeValue;
+    const isBackspace = previousValue.length > value.length;
+
+    // Handle backspace over colon
+    if (isBackspace && previousValue[cursorPosition] === ':') {
+      value = previousValue.slice(0, cursorPosition - 1) + previousValue.slice(cursorPosition + 1);
+      setTimeValue(value);
+      setTimeout(() => {
+        if (e.target) {
+          e.target.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+        }
+      }, 0);
+      return;
+    }
+
+    // Only allow digits and colon
+    value = value.replace(/[^\d:]/g, '');
+
+    // Add colon if user types 2 digits without colon
+    if (value.length === 2 && !value.includes(':')) {
+      value = value + ':';
+    }
+
+    // Don't allow more than 5 chars (MM:SS format)
+    if (value.length > 5) {
+      return;
+    }
+
+    // Split into minutes and seconds
+    const [minutes, seconds] = value.split(':').map(v => v || '');
+
+    // Validate minutes and seconds
+    if (minutes && parseInt(minutes) > 99) {
+      return;
+    }
+    if (seconds && parseInt(seconds) > 59) {
+      return;
+    }
+
+    setTimeValue(value);
     setShowDurationError(false);
+
+    // Format on blur to ensure MM:SS
+    if (value.length === 5) {
+      const formattedValue = `${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+      setTimeValue(formattedValue);
+    }
   };
 
   // Add useEffect to handle wheel event
