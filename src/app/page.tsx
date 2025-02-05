@@ -470,7 +470,11 @@ export default function Page() {
       </header>
       <section aria-label="Workout creation">
         <div className="input-section">
-          <div className="input-section-top">
+       
+          
+          {!isEditing.active || (isEditing.active && isEditing.type === 'exercise') ? (
+            <div className="input-group">
+                 <div className="input-section-top">
             <span>Description</span>
             <div className="input-section-top-buttons">
               <button onClick={() => setIsSaveModalOpen(true)}>
@@ -485,9 +489,6 @@ export default function Page() {
               </button>
             </div>
           </div>
-          
-          {!isEditing.active || (isEditing.active && isEditing.type === 'exercise') ? (
-            <div className="input-group">
               <input
                 type="text"
                 value={currentText}
