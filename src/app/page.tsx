@@ -463,10 +463,12 @@ export default function Page() {
   }, [isModalOpen, isSaveModalOpen, isLoadModalOpen]);
 
   return (
-    <div className="app">
-      <div className="container">
-        <h1>FREE Workout Timer</h1>
-           
+    <main className="container">
+      <header>
+        <h1>Workout Timer</h1>
+        <meta name="description" content="Create and time your custom workout routines" />
+      </header>
+      <section aria-label="Workout creation">
         <div className="input-section">
           <div className="input-section-top">
             <span>Description</span>
@@ -570,7 +572,8 @@ export default function Page() {
             </button>
           </div>
         </div>
-
+      </section>
+      <section aria-label="Workout steps">
         <div className="workout-section">
           <div className={`steps-container ${isEditing.active ? 'editing-active' : ''}`}>
             <DndContext
@@ -599,77 +602,76 @@ export default function Page() {
             />
           )}
         </div>
-
-        {isModalOpen && (
-          <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="workout-timer-title">
-            <div className="modal">
-              {isCountingDown ? (
-                <>
-                  <h2 id="workout-timer-title">Get Ready!</h2>
-                  <div className="timer" role="timer" aria-live="assertive">
-                    {countdownTime}
-                  </div>
+      </section>
+      {isModalOpen && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="workout-timer-title">
+          <div className="modal">
+            {isCountingDown ? (
+              <>
+                <h2 id="workout-timer-title">Get Ready!</h2>
+                <div className="timer" role="timer" aria-live="assertive">
+                  {countdownTime}
+                </div>
+                <div 
+                  className="progress-bar" 
+                  role="progressbar" 
+                  aria-valuemin="0" 
+                  aria-valuemax="3" 
+                  aria-valuenow={countdownTime}
+                >
                   <div 
-                    className="progress-bar" 
-                    role="progressbar" 
-                    aria-valuemin="0" 
-                    aria-valuemax="3" 
-                    aria-valuenow={countdownTime}
+                    className="progress counting" 
+                    style={{ 
+                      width: `${(countdownTime / 3) * 100}%`
+                    }}
+                  />
+                </div>
+              </>
+            ) : isFinished ? (
+              <>
+                <h2>Done!</h2>
+                <div className="timer">{finishCountdown}</div>
+                <div className="progress-bar">
+                  <div 
+                    className="progress counting" 
+                    style={{ 
+                      width: `${(finishCountdown / 3) * 100}%`
+                    }}
+                  />
+                </div>
+              </>
+            ) : currentStepIndex < steps.length && (
+              <>
+                <h2>
+                  {steps[currentStepIndex].text}
+                  {parseInt(repeatCount) > 1 && ` (${currentRepeat}/${repeatCount})`}
+                </h2>
+                <div className="timer">{formatTime(timeLeft)}</div>
+                <div className="progress-bar">
+                  <div 
+                    className="progress counting"
+                    style={{ 
+                      width: `${(timeLeft / steps[currentStepIndex].duration.value) * 100}%`
+                    }}
+                  />
+                </div>
+                <div className="button-group">
+                  <button onClick={stopExercise} className="btn" style={{ backgroundColor: '#ff5252' }}>
+                    Stop
+                  </button>
+                  <button 
+                    onClick={handlePauseResume} 
+                    className="btn"
+                    style={{ backgroundColor: '#FF9800' }}
                   >
-                    <div 
-                      className="progress counting" 
-                      style={{ 
-                        width: `${(countdownTime / 3) * 100}%`
-                      }}
-                    />
-                  </div>
-                </>
-              ) : isFinished ? (
-                <>
-                  <h2>Done!</h2>
-                  <div className="timer">{finishCountdown}</div>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress counting" 
-                      style={{ 
-                        width: `${(finishCountdown / 3) * 100}%`
-                      }}
-                    />
-                  </div>
-                </>
-              ) : currentStepIndex < steps.length && (
-                <>
-                  <h2>
-                    {steps[currentStepIndex].text}
-                    {parseInt(repeatCount) > 1 && ` (${currentRepeat}/${repeatCount})`}
-                  </h2>
-                  <div className="timer">{formatTime(timeLeft)}</div>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress counting"
-                      style={{ 
-                        width: `${(timeLeft / steps[currentStepIndex].duration.value) * 100}%`
-                      }}
-                    />
-                  </div>
-                  <div className="button-group">
-                    <button onClick={stopExercise} className="btn" style={{ backgroundColor: '#ff5252' }}>
-                      Stop
-                    </button>
-                    <button 
-                      onClick={handlePauseResume} 
-                      className="btn"
-                      style={{ backgroundColor: '#FF9800' }}
-                    >
-                      {isPaused ? 'Resume' : 'Pause'}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+                    {isPaused ? 'Resume' : 'Pause'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <SaveWorkoutModal
         isOpen={isSaveModalOpen}
         onClose={() => setIsSaveModalOpen(false)}
@@ -716,6 +718,6 @@ export default function Page() {
         </div>
       )}
   
-    </div>
+    </main>
   );
 } 
