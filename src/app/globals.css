@@ -118,6 +118,7 @@ h1 {
   width: 100%;
 
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .time-input {
