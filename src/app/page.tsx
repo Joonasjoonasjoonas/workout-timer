@@ -200,7 +200,7 @@ export default function Page() {
         clearInterval(interval);
       }
     };
-  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount, playStartBeep, isPaused]);
+  }, [isActive, timeLeft, currentStepIndex, steps, currentRepeat, repeatCount, playStartBeep, playCountdownBeep, isPaused]);
 
   const startExercise = () => {
     if (steps.length === 0) return;
