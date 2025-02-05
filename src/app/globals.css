@@ -215,7 +215,8 @@ h1 {
 }
 
 .pause-btn.editing {
-  background-color: #2d4c2f;
+  background-color: #c6550050; /* Darker orange with transparency */
+  cursor: not-allowed;
   pointer-events: none;
 }
 
@@ -764,7 +765,7 @@ body {
 
 /* For pause items */
 .editing-active .step-item.pause .step-number {
-  background-color: #2d4c2f; /* Darker shade of green */
+  background-color: #8B4513; /* Darker shade of orange/brown */
 }
 
 .editing-active .step-item .step-text,
