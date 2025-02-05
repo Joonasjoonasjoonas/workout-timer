@@ -20,7 +20,7 @@ import {
 import { SpeakerWaveIcon, SpeakerXMarkIcon, TrashIcon} from '@heroicons/react/24/outline';
 import { FolderPlusIcon, FolderOpenIcon} from '@heroicons/react/24/solid';
 import { Step } from '@/types/StepItem';
-import { formatTime, isValidTimeFormat } from '@/utils/utils';
+import { formatTime } from '@/utils/utils';
 import { useAudio } from '@/hooks/useAudio';
 import SortableStepItem from '@/components/SortableStepItem';
 import { TotalRounds } from '@/components/TotalRounds';
@@ -60,8 +60,8 @@ export default function Page() {
   const [isPaused, setIsPaused] = useState(false);
   const [showDescriptionError, setShowDescriptionError] = useState(false);
   const [showDurationError, setShowDurationError] = useState(false);
+  const [isEmptyWorkoutModalOpen, setIsEmptyWorkoutModalOpen] = useState(false);
 
-  const timeInputRef = useRef<HTMLInputElement>(null);
   const { playStartBeep, playCountdownBeep } = useAudio(isSoundEnabled);
 
   // Load steps from localStorage on initial render
@@ -129,9 +129,24 @@ export default function Page() {
       setSteps(exampleWorkout);
       localStorage.setItem('exerciseSteps', JSON.stringify(exampleWorkout));
     }
-  }, []); // Run only on initial mount
+  }, []);
 
-  // Save steps to localStorage whenever they change
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.matches('input[type="text"]')) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
+
   useEffect(() => {
     localStorage.setItem('exerciseSteps', JSON.stringify(steps));
   }, [steps]);
@@ -147,7 +162,7 @@ export default function Page() {
 
     if (isActive && timeLeft > 0 && !isPaused) {
       interval = setInterval(() => {
-        // Play countdown beep in last 3 seconds
+  
         if (timeLeft <= 4) {
           playCountdownBeep();
         }
@@ -155,21 +170,18 @@ export default function Page() {
       }, 1000);
     } else if (isActive && timeLeft === 0) {
       if (currentStepIndex < steps.length - 1) {
-        playStartBeep(); // Play beep for new step
+        playStartBeep(); 
         setCurrentStepIndex((index) => index + 1);
         setTimeLeft(steps[currentStepIndex + 1].duration.value);
       } else if (currentRepeat < parseInt(repeatCount || '1')) {
-        playStartBeep(); // Play beep for new repeat
+        playStartBeep();
         setCurrentRepeat(prev => prev + 1);
         setCurrentStepIndex(0);
         setTimeLeft(steps[0].duration.value);
       } else {
-        // Workout is complete
         setIsActive(false);
         setIsFinished(true);
         setFinishCountdown(3);
-        
-        // Start the finish countdown
         const finishInterval = setInterval(() => {
           setFinishCountdown((prev) => {
             if (prev <= 1) {
@@ -192,13 +204,10 @@ export default function Page() {
 
   const startExercise = () => {
     if (steps.length === 0) return;
-    
     setIsModalOpen(true);
     setIsCountingDown(true);
     setCountdownTime(3);
     setCurrentRepeat(1);
-
-    // Start the 3-second countdown
     const countdownInterval = setInterval(() => {
       setCountdownTime((prev) => {
         if (prev <= 1) {
@@ -228,14 +237,12 @@ export default function Page() {
     setFinishCountdown(3);
     setCurrentRepeat(1);
   };
-  // Update time input handler
+
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     const cursorPosition = e.target.selectionStart || 0;
     const previousValue = timeValue;
     const isBackspace = previousValue.length > value.length;
-
-    // Handle backspace over colon
     if (isBackspace && previousValue[cursorPosition] === ':') {
       value = previousValue.slice(0, cursorPosition - 1) + previousValue.slice(cursorPosition + 1);
       setTimeValue(value);
@@ -246,24 +253,18 @@ export default function Page() {
       }, 0);
       return;
     }
-
-    // Only allow digits and colon
     value = value.replace(/[^\d:]/g, '');
 
-    // Add colon if user types 2 digits without colon
     if (value.length === 2 && !value.includes(':')) {
       value = value + ':';
     }
 
-    // Don't allow more than 5 chars (MM:SS format)
     if (value.length > 5) {
       return;
     }
 
-    // Split into minutes and seconds
     const [minutes, seconds] = value.split(':').map(v => v || '');
 
-    // Validate minutes and seconds
     if (minutes && parseInt(minutes) > 99) {
       return;
     }
@@ -274,32 +275,12 @@ export default function Page() {
     setTimeValue(value);
     setShowDurationError(false);
 
-    // Format on blur to ensure MM:SS
     if (value.length === 5) {
       const formattedValue = `${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
       setTimeValue(formattedValue);
     }
   };
 
-  // Add useEffect to handle wheel event
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.matches('input[type="text"]')) {
-        e.preventDefault();
-      }
-    };
-
-    // Add event listener with passive: false
-    document.addEventListener('wheel', handleWheel, { passive: false });
-
-    // Cleanup
-    return () => {
-      document.removeEventListener('wheel', handleWheel);
-    };
-  }, []);
-
-  // Update handleTimeWheel to not call preventDefault
   const handleTimeWheel = (e: React.WheelEvent<HTMLInputElement>) => {
     if (!timeValue || !timeValue.includes(':')) {
       setTimeValue('00:00');
@@ -322,7 +303,6 @@ export default function Page() {
       `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`
     );
   };
-
 
   const addOrSaveStep = (type: 'exercise' | 'pause') => {
     let hasError = false;
@@ -360,7 +340,6 @@ export default function Page() {
       setSteps([...steps, newStep]);
     }
     
-    // Reset form and editing state
     setCurrentText('');
     setTimeValue('');
     setIsEditing({ active: false, type: null });
@@ -402,6 +381,7 @@ export default function Page() {
       });
     }
   };
+
   const handleSaveWorkout = (workoutName: string) => {
     const updatedWorkouts = {
       ...savedWorkouts,
@@ -419,10 +399,6 @@ export default function Page() {
     }
   };
 
-  // Add new state for empty workout modal
-  const [isEmptyWorkoutModalOpen, setIsEmptyWorkoutModalOpen] = useState(false);
-
-  // Add handler for emptying workout
   const handleEmptyWorkout = () => {
     setSteps([]);
     setIsEmptyWorkoutModalOpen(false);
@@ -530,9 +506,7 @@ export default function Page() {
             >
               Start Workout
             </button>
-            
           </div>
-         
         </div>
 
         <div className="workout-section">
