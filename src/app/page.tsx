@@ -492,7 +492,7 @@ export default function Page() {
                 type="text"
                 value={currentText}
                 onChange={handleTextChange}
-                placeholder="Exercise description (for example: 'Legs', 'Pushups', etc)"
+                placeholder="Description for a single exercise routine (for example: 'Legs', 'Pushups', etc)"
                 className={`text-input ${showDescriptionError ? 'error' : ''}`}
                 aria-label="Exercise description"
                 aria-invalid={showDescriptionError}
