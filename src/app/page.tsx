@@ -467,9 +467,12 @@ export default function Page() {
                 onChange={handleTextChange}
                 placeholder="Exercise description (for example: 'Legs', 'Pushups', etc)"
                 className={`text-input ${showDescriptionError ? 'error' : ''}`}
+                aria-label="Exercise description"
+                aria-invalid={showDescriptionError}
+                aria-describedby={showDescriptionError ? "description-error" : undefined}
               />
               {showDescriptionError ? (
-                <span className="error-message">Description is required</span>
+                <span className="error-message" id="description-error" role="alert">Description is required</span>
               ) : (
                 <span className="error-message"></span>
               )}
@@ -488,7 +491,7 @@ export default function Page() {
               pattern="[0-9]{0,2}:[0-9]{0,2}"
             />
             {showDurationError ? (
-              <span className="error-message">Duration is required</span>
+              <span className="error-message" id="description-error" role="alert">Duration is required</span>
             ) : (
               <span className="error-message"></span>
             )}
@@ -498,12 +501,15 @@ export default function Page() {
             <button 
               onClick={() => addOrSaveStep('exercise')} 
               className="btn"
+              aria-label={isEditing.active ? 'Save exercise' : 'Add exercise'}
             >
               {isEditing.active && isEditing.type === 'exercise' ? 'Save Exercise' : 'Add Exercise'}
             </button>
             <button 
               onClick={() => addOrSaveStep('pause')} 
-              className={`btn pause-btn ${isEditing.active ? 'disabled' : ''}`}
+              className={`btn pause-btn ${isEditing.active ? 'editing' : ''}`}
+              aria-label="Add pause"
+              aria-disabled={isEditing.active}
             >
               {isEditing.active && isEditing.type === 'pause' ? 'Save Pause' : 'Add Pause'}
             </button>
