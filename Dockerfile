@@ -19,5 +19,5 @@ RUN npm run build
 # Expose port
 EXPOSE 3000
 
-# Start the app
-CMD ["npm", "start"] 
+# Start the app with warmup
+CMD npm run warmup & npm start 
