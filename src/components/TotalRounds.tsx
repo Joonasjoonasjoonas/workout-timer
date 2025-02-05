@@ -18,8 +18,6 @@ export function TotalRounds({ repeatCount, setRepeatCount }: TotalRoundsProps) {
     }
   };
 
-  const currentValue = parseInt(repeatCount) || 1;
-
   return (
     <div className="total-rounds">
       <div className="total-rounds-controls">

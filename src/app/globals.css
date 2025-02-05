@@ -587,11 +587,12 @@ body {
 .total-rounds {
   background-color: #3d3d3d;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 0.5rem 1rem; /* Reduced vertical padding to match step items */
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
+  min-height: 56px; /* This matches the height of step items */
 }
 
 .total-rounds-controls {
