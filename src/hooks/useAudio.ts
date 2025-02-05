@@ -39,7 +39,7 @@ export const useAudio = (isSoundEnabled: boolean): AudioHookReturn => {
     } catch (error) {
       console.error('Audio error:', error);
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, getAudioContext]);
 
   const playCountdownBeep = useCallback(() => {
     if (!isSoundEnabled) return;

@@ -426,7 +426,7 @@ export default function Page() {
           setCountdownTime(3);
           setTimeLeft(0);
           setCurrentStepIndex(0);
-          setCurrentRepeat('1');
+          setCurrentRepeat(1);
           // Stop any ongoing sounds
           const audioContext = new (window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext }).AudioContext();
           audioContext.close();
@@ -616,8 +616,8 @@ export default function Page() {
                 <div 
                   className="progress-bar" 
                   role="progressbar" 
-                  aria-valuemin="0" 
-                  aria-valuemax="3" 
+                  aria-valuemin={0} 
+                  aria-valuemax={3} 
                   aria-valuenow={countdownTime}
                 >
                   <div 
