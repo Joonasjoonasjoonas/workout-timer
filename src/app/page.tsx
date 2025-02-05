@@ -357,6 +357,8 @@ export default function Page() {
       setTimeValue(formatTime(stepToEdit.duration.value));
       setIsEditing({ active: true, type: stepToEdit.type });
       setEditingId(id);
+      setShowDescriptionError(false);
+      setShowDurationError(false);
     }
   };
 
