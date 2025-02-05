@@ -1,6 +1,6 @@
 import * as https from 'https';
 
-const RENDER_URL = 'https://your-app-url.onrender.com'; // Replace with your actual Render URL
+const RENDER_URL = 'https://workout-timer-4zec.onrender.com/'; // Replace with your actual Render URL
 
 function warmupApp() {
   console.log('Warming up the application...');
