@@ -40,12 +40,17 @@ function SortableStepItem({ step, index, removeStep, editStep    }: SortableStep
         <p className="step-text">{step.text}</p>
         <p className="step-duration">{formatTime(step.duration.value)}</p>
       </div>
-      <button onClick={() => editStep(step.id)} className="edit-btn">
+      <button 
+        onClick={() => editStep(step.id)} 
+        className="edit-btn"
+        aria-label={`Edit ${step.text}`}
+      >
         <PencilIcon className="w-4 h-4" />
       </button>
       <button
         onClick={handleRemoveClick}
         className="remove-btn"
+        aria-label={`Remove ${step.text}`}
       >
         <TrashIcon className="w-4 h-4" />
       </button>

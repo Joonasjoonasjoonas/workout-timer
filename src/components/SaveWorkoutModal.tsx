@@ -19,9 +19,9 @@ export function SaveWorkoutModal({ isOpen, onClose, onSave }: SaveWorkoutModalPr
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="save-workout-title">
       <div className="modal">
-        <h2>Save Workout</h2>
+        <h2 id="save-workout-title">Save Workout</h2>
         <input
           type="text"
           value={workoutName}
@@ -29,6 +29,8 @@ export function SaveWorkoutModal({ isOpen, onClose, onSave }: SaveWorkoutModalPr
           placeholder="Enter workout name"
           className="number-input"
           style={{ marginBottom: '1rem' }}
+          aria-label="Workout name"
+          required
         />
         <div className="button-group" style={{ marginTop: '1rem' }}>
           <button 

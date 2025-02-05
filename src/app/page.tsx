@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -413,6 +413,20 @@ export default function Page() {
     setShowDescriptionError(false);
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isModalOpen) setIsModalOpen(false);
+        if (isSaveModalOpen) setIsSaveModalOpen(false);
+        if (isLoadModalOpen) setIsLoadModalOpen(false);
+        if (isEmptyWorkoutModalOpen) setIsEmptyWorkoutModalOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isModalOpen, isSaveModalOpen, isLoadModalOpen, isEmptyWorkoutModalOpen]);
+
   return (
     <div className="app">
       <div className="container">
@@ -636,6 +650,15 @@ export default function Page() {
           </div>
         </div>
       </div>
+      {isActive && (
+        <div 
+          role="status" 
+          aria-live="polite" 
+          className="visually-hidden"
+        >
+          {`Current exercise: ${steps[currentStepIndex].text}, Time remaining: ${formatTime(timeLeft)}`}
+        </div>
+      )}
     </div>
   );
 } 
