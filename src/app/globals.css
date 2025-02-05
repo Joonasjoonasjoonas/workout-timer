@@ -811,8 +811,8 @@ body {
 .number-input.error {
   border: 2px solid #ff5252;
 }
-
 .error-message {
   color: #ff5252;
   font-size: 0.875rem;
 }
+

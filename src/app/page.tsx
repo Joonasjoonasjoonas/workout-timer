@@ -279,13 +279,19 @@ export default function Page() {
 
 
   const addOrSaveStep = (type: 'exercise' | 'pause') => {
+    let hasError = false;
+
     if (type === 'exercise' && !currentText.trim()) {
       setShowDescriptionError(true);
-      return;
+      hasError = true;
     }
     
     if (!timeValue) {
       setShowDurationError(true);
+      hasError = true;
+    }
+
+    if (hasError) {
       return;
     }
 
