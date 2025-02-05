@@ -428,7 +428,7 @@ export default function Page() {
           setCurrentStepIndex(0);
           setCurrentRepeat('1');
           // Stop any ongoing sounds
-          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const audioContext = new (window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext }).AudioContext();
           audioContext.close();
         }
         if (isSaveModalOpen) setIsSaveModalOpen(false);
