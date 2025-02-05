@@ -804,7 +804,7 @@ body {
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Adds consistent gap between input and error message */
+  gap: .5rem; /* Adds consistent gap between input and error message */
 }
 
 .text-input.error,
@@ -814,5 +814,11 @@ body {
 .error-message {
   color: #ff5252;
   font-size: 0.875rem;
+  min-height: 1.25rem; /* Reserve space for error message */
+  visibility: hidden; /* Hide but keep the space */
+}
+
+.error-message:not(:empty) {
+  visibility: visible; /* Show when there's content */
 }
 

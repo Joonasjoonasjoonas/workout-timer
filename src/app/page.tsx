@@ -422,8 +422,10 @@ export default function Page() {
                 placeholder="Exercise description (for example: 'Legs', 'Pushups', etc)"
                 className={`text-input ${showDescriptionError ? 'error' : ''}`}
               />
-              {showDescriptionError && (
+              {showDescriptionError ? (
                 <span className="error-message">Description is required</span>
+              ) : (
+                <span className="error-message"></span>
               )}
             </div>
           ) : null}
@@ -439,8 +441,10 @@ export default function Page() {
               className={`number-input ${showDurationError ? 'error' : ''}`}
               pattern="[0-9]{0,2}:[0-9]{0,2}"
             />
-            {showDurationError && (
+            {showDurationError ? (
               <span className="error-message">Duration is required</span>
+            ) : (
+              <span className="error-message"></span>
             )}
           </div>
 
