@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://your-domain.com/sitemap.xml 
+Sitemap: https://workout-timer-4zec.onrender.com/sitemap.xml 
