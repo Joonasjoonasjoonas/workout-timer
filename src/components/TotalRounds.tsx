@@ -23,9 +23,16 @@ export function TotalRounds({ repeatCount, setRepeatCount }: TotalRoundsProps) {
   return (
     <div className="total-rounds">
       <div className="total-rounds-controls">
-        <button 
-          onClick={handleDecrement}
+        <button
+          onClick={() => handleDecrement()}
           className="round-btn"
+          aria-label="Decrease rounds"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleDecrement();
+            }
+          }}
         >
           <MinusIcon className="w-4 h-4" />
         </button>

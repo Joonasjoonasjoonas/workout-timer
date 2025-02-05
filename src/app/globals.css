@@ -161,6 +161,12 @@ h1 {
   background-color: #1976D2;
 }
 
+.btn.disabled {
+  background-color: #2196F350;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .start-btn {
   background-color: #4CAF50; /* Bright green for enabled Start Workout */
   color: white;

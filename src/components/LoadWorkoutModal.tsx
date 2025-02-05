@@ -119,6 +119,9 @@ export function LoadWorkoutModal({ isOpen, onClose, onLoad, workouts, setWorkout
                   <div 
                     className={`workout-btn-container ${selectedWorkout === name ? 'selected' : ''}`}
                     onClick={() => setSelectedWorkout(name)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Load workout: ${name}, contains ${workouts[name].length} exercises`}
                   >
                     <span className="workout-name">{name}</span>
                      <button

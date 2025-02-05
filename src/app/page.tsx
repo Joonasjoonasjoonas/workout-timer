@@ -353,7 +353,7 @@ export default function Page() {
   const editStep = (id: number) => {
     const stepToEdit = steps.find(step => step.id === id);
     if (stepToEdit) {
-      setCurrentText(stepToEdit.text);
+      setCurrentText(stepToEdit.type === 'pause' ? 'PAUSE' : stepToEdit.text);
       setTimeValue(formatTime(stepToEdit.duration.value));
       setIsEditing({ active: true, type: stepToEdit.type });
       setEditingId(id);
@@ -416,7 +416,19 @@ export default function Page() {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isModalOpen) setIsModalOpen(false);
+        // Handle modals
+        if (isModalOpen) {
+          setIsModalOpen(false);
+          setIsActive(false);
+          setIsCountingDown(false);
+          setCountdownTime(3);
+          setTimeLeft(0);
+          setCurrentStepIndex(0);
+          setCurrentRepeat('1');
+          // Stop any ongoing sounds
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          audioContext.close();
+        }
         if (isSaveModalOpen) setIsSaveModalOpen(false);
         if (isLoadModalOpen) setIsLoadModalOpen(false);
         if (isEmptyWorkoutModalOpen) setIsEmptyWorkoutModalOpen(false);
@@ -426,6 +438,27 @@ export default function Page() {
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isModalOpen, isSaveModalOpen, isLoadModalOpen, isEmptyWorkoutModalOpen]);
+
+  useEffect(() => {
+    if (isModalOpen || isSaveModalOpen || isLoadModalOpen) {
+      // Store the last focused element
+      const lastFocus = document.activeElement;
+      
+      // Focus the first focusable element in the modal
+      const modal = document.querySelector('[role="dialog"]');
+      const firstFocusable = modal?.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable instanceof HTMLElement) {
+        firstFocusable.focus();
+      }
+
+      return () => {
+        // Restore focus when modal closes
+        if (lastFocus instanceof HTMLElement) {
+          lastFocus.focus();
+        }
+      };
+    }
+  }, [isModalOpen, isSaveModalOpen, isLoadModalOpen]);
 
   return (
     <div className="app">
@@ -460,6 +493,7 @@ export default function Page() {
                 aria-label="Exercise description"
                 aria-invalid={showDescriptionError}
                 aria-describedby={showDescriptionError ? "description-error" : undefined}
+                disabled={isEditing.active && isEditing.type === 'pause'}
               />
               {showDescriptionError ? (
                 <span className="error-message" id="description-error" role="alert">Description is required</span>
@@ -467,7 +501,18 @@ export default function Page() {
                 <span className="error-message"></span>
               )}
             </div>
-          ) : null}
+          ) : (
+            <div className="input-group">
+              <input
+                type="text"
+                value="PAUSE"
+                disabled
+                className="text-input"
+                aria-label="Pause"
+              />
+              <span className="error-message"></span>
+            </div>
+          )}
           
           <div className="input-group">
             <span>Duration</span>
@@ -490,16 +535,17 @@ export default function Page() {
           <div className="button-group">
             <button 
               onClick={() => addOrSaveStep('exercise')} 
-              className="btn"
-              aria-label={isEditing.active ? 'Save exercise' : 'Add exercise'}
+              className={`btn ${isEditing.active && isEditing.type === 'pause' ? 'disabled' : ''}`}
+              aria-label={isEditing.active && isEditing.type === 'exercise' ? 'Save exercise' : 'Add exercise'}
+              disabled={isEditing.active && isEditing.type === 'pause'}
             >
               {isEditing.active && isEditing.type === 'exercise' ? 'Save Exercise' : 'Add Exercise'}
             </button>
             <button 
               onClick={() => addOrSaveStep('pause')} 
-              className={`btn pause-btn ${isEditing.active ? 'editing' : ''}`}
-              aria-label="Add pause"
-              aria-disabled={isEditing.active}
+              className={`btn pause-btn ${isEditing.active && isEditing.type === 'exercise' ? 'editing' : ''}`}
+              aria-label={isEditing.active && isEditing.type === 'pause' ? 'Save pause' : 'Add pause'}
+              disabled={isEditing.active && isEditing.type === 'exercise'}
             >
               {isEditing.active && isEditing.type === 'pause' ? 'Save Pause' : 'Add Pause'}
             </button>
@@ -553,13 +599,21 @@ export default function Page() {
         </div>
 
         {isModalOpen && (
-          <div className="modal-overlay">
+          <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="workout-timer-title">
             <div className="modal">
               {isCountingDown ? (
                 <>
-                  <h2>Get Ready!</h2>
-                  <div className="timer">{countdownTime}</div>
-                  <div className="progress-bar">
+                  <h2 id="workout-timer-title">Get Ready!</h2>
+                  <div className="timer" role="timer" aria-live="assertive">
+                    {countdownTime}
+                  </div>
+                  <div 
+                    className="progress-bar" 
+                    role="progressbar" 
+                    aria-valuemin="0" 
+                    aria-valuemax="3" 
+                    aria-valuenow={countdownTime}
+                  >
                     <div 
                       className="progress counting" 
                       style={{ 
@@ -659,6 +713,7 @@ export default function Page() {
           {`Current exercise: ${steps[currentStepIndex].text}, Time remaining: ${formatTime(timeLeft)}`}
         </div>
       )}
+  
     </div>
   );
 } 
